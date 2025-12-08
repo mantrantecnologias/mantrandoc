@@ -1,0 +1,29 @@
+{
+  "view": "vw_PBID_Viagem_Analitico",
+  "filters": [
+    {
+      "field": "VR_Pedagio_Viagem",
+      "operator": "Equal",
+      "value": "104.50",
+      "values": [
+        "12"
+      ]
+    },
+		    {
+      "field": "Minuta_Numero",
+      "operator": "Equal",
+      "value": "36",
+      "values": [
+        "12"
+      ]
+    },
+		{
+      "field": "DT_Encerramento",
+      "operator": "Between",
+      "value": "07/18/2019",
+      "values": [
+        "07/18/2019", "07/20/2019"
+      ]
+    }
+  ]
+}
