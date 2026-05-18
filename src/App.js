@@ -6,27 +6,27 @@ import ModalSearch from './components/ModalSearch';
 import GenericContent from './pages/GenericContent';
 import { Layout, Server } from 'lucide-react';
 
-import MantranAPI_Login from './pages/MantranAPI_Principal/MantranAPI_Login';
-import MantranAPI_Login_Auth from './pages/MantranAPI_Principal/MantranAPI_Login_Auth';
-import MantranAPI_Empresa from './pages/MantranAPI_Principal/MantranAPI_Empresa';
-import MantranAPI_GerarToken from './pages/MantranAPI_Principal/MantranAPI_GerarToken';
-import MantranAPI_Filial from './pages/MantranAPI_Principal/MantranAPI_Filial';
+import MantranApiLogin from './pages/MantranAPI_Principal/MantranAPI_Login';
+import MantranApiLoginAuth from './pages/MantranAPI_Principal/MantranAPI_Login_Auth';
+import MantranApiEmpresa from './pages/MantranAPI_Principal/MantranAPI_Empresa';
+import MantranApiGerarToken from './pages/MantranAPI_Principal/MantranAPI_GerarToken';
+import MantranApiFilial from './pages/MantranAPI_Principal/MantranAPI_Filial';
 import MantranSQLViews from './pages/MantranSQLViews/MantranSQLViews';
 import LeoMadeirasAPI from './pages/LeoMadeirasAPI/LeoMadeirasAPI';
 import TMSLeoWeb from './pages/SignIn_SignOn/TMSLeoWeb';
-import APINaderContacao from './pages/WebAPI.CalculoFrete/WebAPI.CalculoFrete_Nader';
-import APIDifaluxBaixaCTE from './pages/WebAPI.Conhecimento/API_BaixaCTe_Difalux';
+import APINaderContacao from './pages/WebAPI.CalculoFrete/WebAPI.CalculoFreteNader';
+import APIDifaluxBaixaCTE from './pages/WebAPI.Conhecimento/APIBaixaCTeDifalux';
 import LeoMadeirasBaixarManifesto from './pages/Routeasy_Comprovei_Leo/LeoMadeiras_BaixarManifesto';
-import LocalizeCargasRodoviario from './pages/LocalizeCargas_Rodoviario/LocalizeCargas_Rodoviario';
+import LocalizeCargasRodoviario from './pages/LocalizeCargas_Rodoviario/LocalizeCargasRodoviario';
 import WebAPIMobile from './pages/WebAPIMobile/WebAPIMobile';
-import WebAPI_Mantran_Interfaces from './pages/LeoMadeirasAPI/Interfaces_SaaS';
+import WebApiMantranInterfaces from './pages/LeoMadeirasAPI/InterfacesSaaS';
 
-import Bandeirantes_Servico from './pages/Servico/Bandeirantes/Bandeirantes_Servico_Mantran_Vira.js';
-import LeoMadeiras_Servico_BaixaNF from './pages/Servico/LeoMadeiras/LeoMadeiras_Servico_BaixaNF.js';
-import LeoMadeiras_Servico_GeracaoAutomatica from './pages/Servico/LeoMadeiras/LeoMadeiras_Servico_GeracaoAutomatica.js';
-import Shopee_Servico_GeracaoEnvioDocumentos from './pages/Servico/Shopee/Shopee_Servico_GeracaoEnvioDocumentos.js';
-import Shopee_Servico_GerarCTe from './pages/Servico/Shopee/Shopee_Servico_GerarCTe.js';
-import Shopee_Servico_MultiCTe from './pages/Servico/Shopee/Shopee_Servico_MultiCTe.js';
+import BandeirantesServico from './pages/Servico/Bandeirantes/Bandeirantes_Servico_Mantran_Vira.js';
+import LeoMadeirasServicoBaixaNf from './pages/Servico/LeoMadeiras/LeoMadeiras_Servico_BaixaNF.js';
+import LeoMadeirasServicoGeracaoAutomatica from './pages/Servico/LeoMadeiras/LeoMadeiras_Servico_GeracaoAutomatica.js';
+import ShopeeServicoGeracaoEnvioDocumentos from './pages/Servico/Shopee/Shopee_Servico_GeracaoEnvioDocumentos.js';
+import ShopeeServicoGerarCTe from './pages/Servico/Shopee/Shopee_Servico_GerarCTe.js';
+import ShopeeServicoMultiCTe from './pages/Servico/Shopee/Shopee_Servico_MultiCTe.js';
 
 
 
@@ -121,15 +121,15 @@ const App = () => {
   const renderContent = () => {
     switch (selectedContent) {
       case 'Mantran.API - Principal':
-        if (scrollToSection === 'mantran_api_gerar_token') return <MantranAPI_GerarToken scrollToSection={scrollToSection} />;
-        if (scrollToSection === 'mantran_api_login_auth') return <MantranAPI_Login_Auth scrollToSection={scrollToSection} />;
-        if (scrollToSection === 'mantran_api_empresa') return <MantranAPI_Empresa scrollToSection={scrollToSection} onNavigateToGerarToken={() => handleSelect('Mantran.API - Principal', 'mantran_api_gerar_token')} />;
-        if (scrollToSection === 'mantran_api_filial') return <MantranAPI_Filial scrollToSection={scrollToSection} onNavigateToGerarToken={() => handleSelect('Mantran.API - Principal', 'mantran_api_gerar_token')} />;
-        return <MantranAPI_Login scrollToSection={scrollToSection} />;
+        if (scrollToSection === 'mantran_api_gerar_token') return <MantranApiGerarToken scrollToSection={scrollToSection} />;
+        if (scrollToSection === 'mantran_api_login_auth') return <MantranApiLoginAuth scrollToSection={scrollToSection} />;
+        if (scrollToSection === 'mantran_api_empresa') return <MantranApiEmpresa scrollToSection={scrollToSection} onNavigateToGerarToken={() => handleSelect('Mantran.API - Principal', 'mantran_api_gerar_token')} />;
+        if (scrollToSection === 'mantran_api_filial') return <MantranApiFilial scrollToSection={scrollToSection} onNavigateToGerarToken={() => handleSelect('Mantran.API - Principal', 'mantran_api_gerar_token')} />;
+        return <MantranApiLogin scrollToSection={scrollToSection} />;
       case 'Mantran - SQL Views':
         return <MantranSQLViews scrollToSection={scrollToSection} />;
       case 'Web API Interfaces':
-        return <WebAPI_Mantran_Interfaces scrollToSection={scrollToSection} />;
+        return <WebApiMantranInterfaces scrollToSection={scrollToSection} />;
       case 'Sign In Sign On':
         return <TMSLeoWeb scrollToSection={scrollToSection} />;
       case 'Web API Cálculo de Frete':
@@ -144,17 +144,17 @@ const App = () => {
         return <WebAPIMobile scrollToSection={scrollToSection} />;
 
       case 'Bandeirantes':
-        return <Bandeirantes_Servico scrollToSection={scrollToSection} />;
+        return <BandeirantesServico scrollToSection={scrollToSection} />;
       case 'Leo Madeiras':
-        if (scrollToSection === 'leo_nf') return <LeoMadeiras_Servico_BaixaNF scrollToSection={scrollToSection} />;
-        if (scrollToSection === 'leo_auto') return <LeoMadeiras_Servico_GeracaoAutomatica scrollToSection={scrollToSection} />;
-        return <LeoMadeiras_Servico_BaixaNF scrollToSection={scrollToSection} />;
+        if (scrollToSection === 'leo_nf') return <LeoMadeirasServicoBaixaNf scrollToSection={scrollToSection} />;
+        if (scrollToSection === 'leo_auto') return <LeoMadeirasServicoGeracaoAutomatica scrollToSection={scrollToSection} />;
+        return <LeoMadeirasServicoBaixaNf scrollToSection={scrollToSection} />;
 
       case 'Shopee':
-        if (scrollToSection === 'shopee_cte') return <Shopee_Servico_GerarCTe scrollToSection={scrollToSection} />;
-        if (scrollToSection === 'shopee_multi') return <Shopee_Servico_MultiCTe scrollToSection={scrollToSection} />;
-        if (scrollToSection === 'shopee_envio') return <Shopee_Servico_GeracaoEnvioDocumentos scrollToSection={scrollToSection} />;
-        return <Shopee_Servico_GerarCTe scrollToSection={scrollToSection} />;
+        if (scrollToSection === 'shopee_cte') return <ShopeeServicoGerarCTe scrollToSection={scrollToSection} />;
+        if (scrollToSection === 'shopee_multi') return <ShopeeServicoMultiCTe scrollToSection={scrollToSection} />;
+        if (scrollToSection === 'shopee_envio') return <ShopeeServicoGeracaoEnvioDocumentos scrollToSection={scrollToSection} />;
+        return <ShopeeServicoGerarCTe scrollToSection={scrollToSection} />;
 
       case 'Mantran.Leo_Madeiras.API':
         return <LeoMadeirasAPI scrollToSection={scrollToSection} />;
