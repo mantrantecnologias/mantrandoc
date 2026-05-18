@@ -5,18 +5,18 @@ const LocalizeCargasRodoviario = () => {
   const content = (
     <div className="conteudo-div">
       <h4>API – Localize Cargas (Rodoviário)</h4>
-{
-    //     <h3>Sumário</h3>
-    //    <ol>
-    //     <li><strong>Objetivo</strong></li>
-    //     <li><strong>Endpoint</strong></li>
-    //    <li><strong>Request</strong></li>
-    //    <li><strong>Response – Sucesso</strong></li>
-    //    <li><strong>Response – Erro</strong></li>
-    //    <li><strong>Observações Importantes</strong></li>
-    //    <li><strong>Conclusão</strong></li>
-    //  </ol>
-}
+      {
+        //     <h3>Sumário</h3>
+        //    <ol>
+        //     <li><strong>Objetivo</strong></li>
+        //     <li><strong>Endpoint</strong></li>
+        //    <li><strong>Request</strong></li>
+        //    <li><strong>Response – Sucesso</strong></li>
+        //    <li><strong>Response – Erro</strong></li>
+        //    <li><strong>Observações Importantes</strong></li>
+        //    <li><strong>Conclusão</strong></li>
+        //  </ol>
+      }
       {/* 1. OBJETIVO */}
       <section id="section_localize_cargas">
         <h3>1. Objetivo</h3>
@@ -36,7 +36,7 @@ const LocalizeCargasRodoviario = () => {
 
         <p><strong>GET:</strong></p>
         <pre>
-{`http://w2022-0691.emartim.com.br:35399/CTE/LocalizeCargas`}
+          {`http://w2022-0691.emartim.com.br:35399/CTE/LocalizeCargas`}
         </pre>
       </section>
 
@@ -47,7 +47,7 @@ const LocalizeCargasRodoviario = () => {
         <p><strong>Exemplo de Request (JSON):</strong></p>
 
         <pre>
-{`{
+          {`{
   "usuario": "API-teste",
   "senha": "teste123",
   "cnpj": "06.369.673/0004-42",
@@ -69,7 +69,7 @@ const LocalizeCargasRodoviario = () => {
         <h3>4. Response – Sucesso</h3>
 
         <pre>
-{`{
+          {`{
   "success": true,
   "message": "",
   "remetente": "06369673000442 L. A. V. DRESSLER & CIA LTDA",
@@ -106,7 +106,7 @@ const LocalizeCargasRodoviario = () => {
         <h3>5. Response – Erro</h3>
 
         <pre>
-{`{
+          {`{
   "success": false,
   "message": "Nenhum registro encontrado para a chave informada.",
   "remetente": null,

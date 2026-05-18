@@ -3,7 +3,6 @@ import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import Login from './components/Login';
 import ModalSearch from './components/ModalSearch';
-import GenericContent from './pages/GenericContent';
 import { Layout, Server } from 'lucide-react';
 
 import MantranApiLogin from './pages/MantranAPI_Principal/MantranAPI_Login';

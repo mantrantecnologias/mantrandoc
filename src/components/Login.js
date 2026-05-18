@@ -5,8 +5,8 @@ const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const [authorizedUserName, setAuthorizedUserName] = useState('admin');
-  const [authorizedPassword, setAuthorizedPassword] = useState('senha456');
+  const authorizedUserName = 'admin';
+  const authorizedPassword = 'senha456';
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -17,7 +17,7 @@ const Login = ({ onLogin }) => {
     }
   };
   function validarUsuario() {
-    return (username == authorizedUserName && password == authorizedPassword);
+    return (username === authorizedUserName && password === authorizedPassword);
   }
 
   return (
