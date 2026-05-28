@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import GenericContent from '../GenericContent';
+import { API_BASE_URL } from '../../config/apiConfig';
 
 const MantranAPI_GerarToken = ({ scrollToSection }) => {
 
@@ -50,7 +51,7 @@ const MantranAPI_GerarToken = ({ scrollToSection }) => {
             </tr>
             <tr>
               <td><strong>URL</strong></td>
-              <td><code>http://api.mantran.eti.br:35390/api/Token/gerar-token</code></td>
+              <td><code>{API_BASE_URL}/api/Token/gerar-token</code></td>
             </tr>
             <tr>
               <td><strong>Content-Type</strong></td>
@@ -71,7 +72,7 @@ const MantranAPI_GerarToken = ({ scrollToSection }) => {
           Envie uma requisição <code>POST</code> para o endpoint acima com o seguinte corpo JSON
           contendo seu usuário e senha:
         </p>
-        <pre className="code-block">{`POST http://api.mantran.eti.br:35390/api/Token/gerar-token
+        <pre className="code-block">{`POST ${API_BASE_URL}/api/Token/gerar-token
 Content-Type: application/json
 
 {
@@ -146,7 +147,7 @@ Content-Type: application/json
           Com o token em mãos, inclua-o no cabeçalho <code>Authorization</code> de cada requisição
           aos endpoints protegidos, no formato <code>Bearer {'{token}'}</code>:
         </p>
-        <pre className="code-block">{`POST http://api.mantran.eti.br:35390/api/SeuEndpoint
+        <pre className="code-block">{`POST ${API_BASE_URL}/api/SeuEndpoint
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJFQ0RILUVTLUEyNTZLVyIsImVuYyI6IkEyNTZHQ00...
 

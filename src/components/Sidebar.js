@@ -12,6 +12,7 @@ import {
 
 const Sidebar = ({ isLoggedIn, onSelect }) => {
   const [openSection, setOpenSection] = useState(null);
+  const [openGroup, setOpenGroup] = useState(null);
   const [activeSubmenu, setActiveSubmenu] = useState(null);
   const [collapsed, setCollapsed] = useState(false);
 
@@ -33,6 +34,29 @@ const Sidebar = ({ isLoggedIn, onSelect }) => {
       icon: <Server size={18} />,
       subitems: [
         { id: 'mantran_api_gerar_token', label: 'Gerar Token' },
+        {
+          group: 'veiculo',
+          label: 'Veículo',
+          items: [
+            { id: 'mantran_api_carroceria', label: 'Carroceria' },
+            { id: 'mantran_api_modelo_veiculo', label: 'Modelo de Veículo' },
+          ]
+        },
+        {
+          group: 'produto',
+          label: 'Produto',
+          items: [
+            { id: 'mantran_api_embalagem', label: 'Embalagem' },
+            { id: 'mantran_api_produto', label: 'Produto' },
+          ]
+        },
+        {
+          group: 'integracoes',
+          label: 'Integrações',
+          items: [
+            { id: 'mantran_api_rota_livre', label: 'Rota Livre' },
+          ]
+        },
         { id: 'mantran_api_login', label: 'Arquitetura', private: true },
         { id: 'mantran_api_login_auth', label: 'Login', private: true },
         { id: 'mantran_api_empresa', label: 'Empresa', private: true },
@@ -143,19 +167,48 @@ const Sidebar = ({ isLoggedIn, onSelect }) => {
           </div>
           {openSection === item.id && (
             <ul className="mt-1 ml-9 space-y-1">
-              {subs.map((sub) => (
-                <li
-                  key={sub.id}
-                  onClick={() => handleSubmenuClick(item.id, sub.id)}
-                  className={`flex items-center gap-2 p-2 rounded-md text-sm cursor-pointer transition-colors ${activeSubmenu === sub.id ? "bg-red-100 text-red-700 font-bold" : "text-gray-500 hover:bg-gray-50"}`}
-                >
-                  {sub.private
-                    ? <Lock size={11} className="text-gray-400 shrink-0" />
-                    : <CheckCircle size={11} className="text-green-500 shrink-0" />
-                  }
-                  {sub.label}
-                </li>
-              ))}
+              {subs.map((sub) => {
+                if (sub.group) {
+                  return (
+                    <li key={sub.group}>
+                      <div
+                        onClick={() => setOpenGroup(openGroup === sub.group ? null : sub.group)}
+                        className={`flex items-center gap-2 p-2 rounded-md text-sm cursor-pointer transition-colors font-semibold ${openGroup === sub.group ? "text-red-700" : "text-gray-500 hover:bg-gray-50"}`}
+                      >
+                        {openGroup === sub.group ? <ChevronDown size={11} /> : <ChevronRight size={11} />}
+                        {sub.label}
+                      </div>
+                      {openGroup === sub.group && (
+                        <ul className="ml-4 space-y-1">
+                          {sub.items.map((groupItem) => (
+                            <li
+                              key={groupItem.id}
+                              onClick={() => handleSubmenuClick(item.id, groupItem.id)}
+                              className={`flex items-center gap-2 p-2 rounded-md text-sm cursor-pointer transition-colors ${activeSubmenu === groupItem.id ? "bg-red-100 text-red-700 font-bold" : "text-gray-500 hover:bg-gray-50"}`}
+                            >
+                              <CheckCircle size={11} className="text-green-500 shrink-0" />
+                              {groupItem.label}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </li>
+                  );
+                }
+                return (
+                  <li
+                    key={sub.id}
+                    onClick={() => handleSubmenuClick(item.id, sub.id)}
+                    className={`flex items-center gap-2 p-2 rounded-md text-sm cursor-pointer transition-colors ${activeSubmenu === sub.id ? "bg-red-100 text-red-700 font-bold" : "text-gray-500 hover:bg-gray-50"}`}
+                  >
+                    {sub.private
+                      ? <Lock size={11} className="text-gray-400 shrink-0" />
+                      : <CheckCircle size={11} className="text-green-500 shrink-0" />
+                    }
+                    {sub.label}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </li>

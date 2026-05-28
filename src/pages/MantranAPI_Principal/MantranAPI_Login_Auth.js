@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import GenericContent from '../GenericContent';
+import { API_BASE_URL } from '../../config/apiConfig';
 
 const MantranAPI_Login_Auth = ({ scrollToSection }) => {
 
@@ -112,13 +113,13 @@ const MantranAPI_Login_Auth = ({ scrollToSection }) => {
       <section id="fluxo_login">
         <h3>3. Endpoints do TokenController</h3>
 
-        <h4>3.1 POST /api/token — Login</h4>
+        <h4>3.1 POST ${API_BASE_URL}/api/token — Login</h4>
         <p>
           Endpoint principal de autenticação. Recebe <code>Login_Request_Transp</code> no body,
           executa o fluxo multi-tenant completo, emite o cookie HttpOnly e retorna o objeto
           <code> Usuario_Aplicao_API_DTo</code> para o frontend montar a sessão.
         </p>
-        <pre className="code-block">{`POST /api/token
+        <pre className="code-block">{`POST ${API_BASE_URL}/api/token
 Content-Type: application/json
 
 {
@@ -180,14 +181,14 @@ Set-Cookie: auth_token=eyJ...; HttpOnly; SameSite=Lax; Path=/; Expires=...
           </tbody>
         </table>
 
-        <h4>3.2 POST /api/token/gerar-token</h4>
+        <h4>3.2 POST ${API_BASE_URL}/api/token/gerar-token</h4>
         <p>
           Executa o mesmo fluxo de autenticação do <code>Login</code>, mas difere no retorno:
           ao invés do objeto <code>Usuario_Aplicao_API_DTo</code>, retorna apenas o token JWE
           em string. Útil para integrações que precisam do token para montar o header
           <code> Authorization: Bearer</code> manualmente em vez de depender do cookie automático.
         </p>
-        <pre className="code-block">{`POST /api/token/gerar-token
+        <pre className="code-block">{`POST ${API_BASE_URL}/api/token/gerar-token
 Content-Type: application/json
 
 {
@@ -203,8 +204,8 @@ return Ok(token);  // string raw do JWE`}</pre>
           <thead>
             <tr>
               <th>Característica</th>
-              <th>POST /api/token</th>
-              <th>POST /api/token/gerar-token</th>
+              <th>POST ${API_BASE_URL}/api/token</th>
+              <th>POST ${API_BASE_URL}/api/token/gerar-token</th>
             </tr>
           </thead>
           <tbody>
@@ -226,13 +227,13 @@ return Ok(token);  // string raw do JWE`}</pre>
           </tbody>
         </table>
 
-        <h4>3.3 POST /api/token/logout</h4>
+        <h4>3.3 POST ${API_BASE_URL}/api/token/logout</h4>
         <p>
           Invalida o cookie no navegador sobrescrevendo-o com valor vazio e expiração no passado.
           Usa o mesmo método <code>CookieOpcoes</code> do login para garantir que todas as flags
           coincidam — se as opções diferirem, o navegador pode não remover o cookie correto.
         </p>
-        <pre className="code-block">{`POST /api/token/logout
+        <pre className="code-block">{`POST ${API_BASE_URL}/api/token/logout
 Authorization: (cookie enviado automaticamente pelo navegador)
 
 // Implementação:

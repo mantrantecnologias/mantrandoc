@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import GenericContent from '../GenericContent';
+import { API_BASE_URL } from '../../config/apiConfig';
 
 const MantranAPI_Empresa = ({ scrollToSection, onNavigateToGerarToken }) => {
 
@@ -265,7 +266,7 @@ const MantranAPI_Empresa = ({ scrollToSection, onNavigateToGerarToken }) => {
         </p>
 
         <h4>3.1 Requisição</h4>
-        <pre className="code-block">{`GET /api/empresa/buscar-lista-empresas
+        <pre className="code-block">{`GET ${API_BASE_URL}/api/empresa/buscar-lista-empresas
 Authorization: Bearer {token_jwt}`}</pre>
 
         <h4>3.2 Resposta — 200 OK</h4>
@@ -307,7 +308,7 @@ public async Task<IActionResult> BuscarListaEmpresas()
         </p>
 
         <h4>4.1 Requisição</h4>
-        <pre className="code-block">{`POST /api/empresa/buscar-empresa
+        <pre className="code-block">{`POST ${API_BASE_URL}/api/empresa/buscar-empresa
 Authorization: Bearer {token_jwt}
 Content-Type: application/json
 
@@ -355,7 +356,7 @@ public async Task<IActionResult> BuscarEmpresa( [FromBody] Empresa_Transp empres
         </p>
 
         <h4>5.1 Requisição</h4>
-        <pre className="code-block">{`POST /api/empresa/incluir-empresa
+        <pre className="code-block">{`POST ${API_BASE_URL}/api/empresa/incluir-empresa
 Authorization: Bearer {token_jwt}
 Content-Type: application/json
 
@@ -435,7 +436,7 @@ public async Task<IActionResult> IncluirEmpresa( [FromBody] Empresa_Transp empre
         </p>
 
         <h4>6.1 Requisição</h4>
-        <pre className="code-block">{`POST /api/empresa/alterar-empresa
+        <pre className="code-block">{`POST ${API_BASE_URL}/api/empresa/alterar-empresa
 Authorization: Bearer {token_jwt}
 Content-Type: application/json
 
@@ -494,7 +495,7 @@ public async Task<IActionResult> AlterarEmpresa( [FromBody] Empresa_Transp empre
         </p>
 
         <h4>7.1 Requisição</h4>
-        <pre className="code-block">{`POST /api/empresa/excluir-empresa
+        <pre className="code-block">{`POST ${API_BASE_URL}/api/empresa/excluir-empresa
 Authorization: Bearer {token_jwt}
 Content-Type: application/json
 
@@ -550,7 +551,7 @@ public async Task<IActionResult> ExcluirEmpresa( [FromBody] Empresa_Transp empre
         </p>
 
         <h4>8.1 Requisição</h4>
-        <pre className="code-block">{`POST /api/empresa/verifica-senha-empresa
+        <pre className="code-block">{`POST ${API_BASE_URL}/api/empresa/verifica-senha-empresa
 Authorization: Bearer {token_jwt}
 Content-Type: application/json
 

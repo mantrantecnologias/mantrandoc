@@ -144,7 +144,7 @@ const MinhaPagina = ({ scrollToSection, onNavigateToGerarToken }) => {
   const content = (
     <div className="conteudo-div">
 
-      {/* AVISO DE TOKEN — incluir em todas as páginas privadas */}
+      {/* AVISO DE TOKEN — incluir em TODAS as páginas de documentação, públicas e privadas */}
       <div style={{ background:'#fef9c3', border:'1px solid #fbbf24', borderRadius:'8px',
         padding:'14px 18px', marginBottom:'24px', display:'flex', alignItems:'center',
         gap:'10px', fontSize:'0.92rem', color:'#78350f' }}>
@@ -293,10 +293,15 @@ const MinhaPagina = ({ scrollToSection, onNavigateToGerarToken }) => { ... }
 
 Ao receber um controller C# para documentar, seguir esta estrutura de seções:
 
-1. **Visão Geral** — tabela resumo com Método / Rota / Permissão Extra / Descrição
+1. **Visão Geral** — tabela resumo com Método / Rota / Descrição (sem coluna de Role)
 2. **Controle de Permissão** (se houver `Checar_Permissao_Processo`) — tabela com códigos e exemplo de resposta 403
 3. **Modelo de Dados** — tabela dos campos do transport class, agrupados por categoria quando há muitos campos
 4. **Um endpoint por seção** — cada seção contém: requisição (code-block), resposta 200 (code-block), tabela de respostas de erro, implementação (code-block opcional)
+
+### Regras obrigatórias de conteúdo
+
+- **Aviso de token em TODAS as páginas** — O banner amarelo de token (`onNavigateToGerarToken`) deve aparecer no topo de toda página de documentação, seja pública ou privada no sidebar.
+- **Nunca expor roles** — Nomes de roles (`tms_web`, `rota_livre`, etc.) são informação interna e **não devem aparecer** na documentação. Isso inclui: coluna "Role" na tabela de visão geral, seções de autenticação que mencionam a role, e descrições de erro 403. O 403 deve ser descrito simplesmente como `"Sem permissão de acesso"`.
 
 ### Padrão de resposta de erro (todos os endpoints seguem este envelope):
 ```json
@@ -328,7 +333,29 @@ Ao receber um controller C# para documentar, seguir esta estrutura de seções:
 
 ---
 
-## 13. Endpoint de Produção para Gerar Token
+## 13. URL Base da API (centralizada)
+
+A URL base do servidor está centralizada em `src/config/apiConfig.js`:
+```js
+export const API_BASE_URL = 'http://api.mantran.eti.br:35390';
+```
+
+**Uso em páginas de documentação:**
+```jsx
+import { API_BASE_URL } from '../../config/apiConfig';
+
+// Em template literals de code-block:
+<pre className="code-block">{`POST ${API_BASE_URL}/api/SeuController/seu-endpoint`}</pre>
+
+// Em células JSX (ex: tabela):
+<code>{API_BASE_URL}/api/SeuController/seu-endpoint</code>
+```
+
+Se o domínio mudar, alterar apenas `apiConfig.js` reflete em toda a documentação.
+
+---
+
+## 14. Endpoint de Produção para Gerar Token
 
 ```
 POST http://api.mantran.eti.br:35390/api/Token/gerar-token

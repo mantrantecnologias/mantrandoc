@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import GenericContent from '../GenericContent';
+import { API_BASE_URL } from '../../config/apiConfig';
 
 const MantranAPI_Filial = ({ scrollToSection, onNavigateToGerarToken }) => {
 
@@ -305,7 +306,7 @@ if( !await Funcao_Negocio.Checar_Permissao_Processo( "1152", "Incluir - Filial",
         </p>
 
         <h4>Requisição</h4>
-        <pre className="code-block">{`POST /api/filial/buscar-lista-filiais
+        <pre className="code-block">{`POST ${API_BASE_URL}/api/filial/buscar-lista-filiais
 Authorization: Bearer {token}
 Content-Type: application/json
 
@@ -355,7 +356,7 @@ Content-Type: application/json
         </p>
 
         <h4>Requisição</h4>
-        <pre className="code-block">{`POST /api/filial/buscar-filial
+        <pre className="code-block">{`POST ${API_BASE_URL}/api/filial/buscar-filial
 Authorization: Bearer {token}
 Content-Type: application/json
 
@@ -397,7 +398,7 @@ Content-Type: application/json
         </p>
 
         <h4>Requisição</h4>
-        <pre className="code-block">{`POST /api/filial/incluir-filial
+        <pre className="code-block">{`POST ${API_BASE_URL}/api/filial/incluir-filial
 Authorization: Bearer {token}
 Content-Type: application/json
 
@@ -435,7 +436,7 @@ Content-Type: application/json
         </p>
 
         <h4>Requisição</h4>
-        <pre className="code-block">{`POST /api/filial/alterar-filial
+        <pre className="code-block">{`POST ${API_BASE_URL}/api/filial/alterar-filial
 Authorization: Bearer {token}
 Content-Type: application/json
 
@@ -469,7 +470,7 @@ Content-Type: application/json
         </p>
 
         <h4>Requisição</h4>
-        <pre className="code-block">{`POST /api/filial/excluir-filial
+        <pre className="code-block">{`POST ${API_BASE_URL}/api/filial/excluir-filial
 Authorization: Bearer {token}
 Content-Type: application/json
 
@@ -501,7 +502,7 @@ Content-Type: application/json
         </p>
 
         <h4>Requisição</h4>
-        <pre className="code-block">{`POST /api/filial/buscar-filial-parametro
+        <pre className="code-block">{`POST ${API_BASE_URL}/api/filial/buscar-filial-parametro
 Authorization: Bearer {token}
 Content-Type: application/json
 
@@ -531,7 +532,7 @@ Content-Type: application/json
         </p>
 
         <h4>Requisição</h4>
-        <pre className="code-block">{`POST /api/filial/alterar-filial-parametro
+        <pre className="code-block">{`POST ${API_BASE_URL}/api/filial/alterar-filial-parametro
 Authorization: Bearer {token}
 Content-Type: application/json
 
@@ -562,7 +563,7 @@ Content-Type: application/json
         </p>
 
         <h4>Requisição</h4>
-        <pre className="code-block">{`POST /api/filial/buscar-filial-hub-desenvolvedor
+        <pre className="code-block">{`POST ${API_BASE_URL}/api/filial/buscar-filial-hub-desenvolvedor
 Authorization: Bearer {token}
 Content-Type: application/json
 
@@ -614,7 +615,7 @@ Content-Type: application/json
         </table>
 
         <h4>Requisição</h4>
-        <pre className="code-block">{`POST /api/filial/buscar-lista-filiais-acesso-usuario
+        <pre className="code-block">{`POST ${API_BASE_URL}/api/filial/buscar-lista-filiais-acesso-usuario
 Authorization: Bearer {token}
 Content-Type: application/json
 

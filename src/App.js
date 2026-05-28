@@ -5,11 +5,16 @@ import Login from './components/Login';
 import ModalSearch from './components/ModalSearch';
 import { Layout, Server } from 'lucide-react';
 
-import MantranApiLogin from './pages/MantranAPI_Principal/MantranAPI_Login';
-import MantranApiLoginAuth from './pages/MantranAPI_Principal/MantranAPI_Login_Auth';
-import MantranApiEmpresa from './pages/MantranAPI_Principal/MantranAPI_Empresa';
-import MantranApiGerarToken from './pages/MantranAPI_Principal/MantranAPI_GerarToken';
-import MantranApiFilial from './pages/MantranAPI_Principal/MantranAPI_Filial';
+import MantranAPI_Login from './pages/MantranAPI_Principal/MantranAPI_Login';
+import MantranAPI_Login_Auth from './pages/MantranAPI_Principal/MantranAPI_Login_Auth';
+import MantranAPI_Empresa from './pages/MantranAPI_Principal/MantranAPI_Empresa';
+import MantranAPI_GerarToken from './pages/MantranAPI_Principal/MantranAPI_GerarToken';
+import MantranAPI_Filial from './pages/MantranAPI_Principal/MantranAPI_Filial';
+import MantranAPI_VeiculoCarroceria from './pages/MantranAPI_Principal/MantranAPI_VeiculoCarroceria';
+import MantranAPI_ModeloVeiculo from './pages/MantranAPI_Principal/MantranAPI_ModeloVeiculo';
+import MantranAPI_Embalagem from './pages/MantranAPI_Principal/MantranAPI_Embalagem';
+import MantranAPI_Produto from './pages/MantranAPI_Principal/MantranAPI_Produto';
+import MantranAPI_RotaLivre from './pages/MantranAPI_Principal/MantranAPI_RotaLivre';
 import MantranSQLViews from './pages/MantranSQLViews/MantranSQLViews';
 import LeoMadeirasAPI from './pages/LeoMadeirasAPI/LeoMadeirasAPI';
 import TMSLeoWeb from './pages/SignIn_SignOn/TMSLeoWeb';
@@ -81,6 +86,8 @@ const App = () => {
     const results = [];
 
     documentationIndex.forEach((item) => {
+      if (item.private && !isLoggedIn) return;
+
       const labelMatch = (item.label || "").toLowerCase().includes(query);
       const pageMatch = (item.page || "").toLowerCase().includes(query);
       const contentMatch = (item.content || "").toLowerCase().includes(query);
@@ -120,11 +127,17 @@ const App = () => {
   const renderContent = () => {
     switch (selectedContent) {
       case 'Mantran.API - Principal':
-        if (scrollToSection === 'mantran_api_gerar_token') return <MantranApiGerarToken scrollToSection={scrollToSection} />;
-        if (scrollToSection === 'mantran_api_login_auth') return <MantranApiLoginAuth scrollToSection={scrollToSection} />;
-        if (scrollToSection === 'mantran_api_empresa') return <MantranApiEmpresa scrollToSection={scrollToSection} onNavigateToGerarToken={() => handleSelect('Mantran.API - Principal', 'mantran_api_gerar_token')} />;
-        if (scrollToSection === 'mantran_api_filial') return <MantranApiFilial scrollToSection={scrollToSection} onNavigateToGerarToken={() => handleSelect('Mantran.API - Principal', 'mantran_api_gerar_token')} />;
-        return <MantranApiLogin scrollToSection={scrollToSection} />;
+        if (scrollToSection === 'mantran_api_gerar_token') return <MantranAPI_GerarToken scrollToSection={scrollToSection} />;
+        if (scrollToSection === 'mantran_api_rota_livre') return <MantranAPI_RotaLivre scrollToSection={scrollToSection} onNavigateToGerarToken={() => handleSelect('Mantran.API - Principal', 'mantran_api_gerar_token')} />;
+        if (scrollToSection === 'mantran_api_modelo_veiculo') return <MantranAPI_ModeloVeiculo scrollToSection={scrollToSection} onNavigateToGerarToken={() => handleSelect('Mantran.API - Principal', 'mantran_api_gerar_token')} />;
+        if (scrollToSection === 'mantran_api_login_auth') return <MantranAPI_Login_Auth scrollToSection={scrollToSection} />;
+        if (scrollToSection === 'mantran_api_empresa') return <MantranAPI_Empresa scrollToSection={scrollToSection} onNavigateToGerarToken={() => handleSelect('Mantran.API - Principal', 'mantran_api_gerar_token')} />;
+        if (scrollToSection === 'mantran_api_filial') return <MantranAPI_Filial scrollToSection={scrollToSection} onNavigateToGerarToken={() => handleSelect('Mantran.API - Principal', 'mantran_api_gerar_token')} />;
+        if (scrollToSection === 'mantran_api_veiculo_carroceria') return <MantranAPI_VeiculoCarroceria scrollToSection={scrollToSection} onNavigateToGerarToken={() => handleSelect('Mantran.API - Principal', 'mantran_api_gerar_token')} />;
+        if (scrollToSection === 'mantran_api_carroceria') return <MantranAPI_VeiculoCarroceria scrollToSection={scrollToSection} />;
+        if (scrollToSection === 'mantran_api_embalagem' || scrollToSection === 'embalagem_modelo' || scrollToSection === 'embalagem_buscar_lista' || scrollToSection === 'embalagem_incluir' || scrollToSection === 'embalagem_alterar' || scrollToSection === 'embalagem_excluir') return <MantranAPI_Embalagem scrollToSection={scrollToSection} onNavigateToGerarToken={() => handleSelect('Mantran.API - Principal', 'mantran_api_gerar_token')} />;
+        if (scrollToSection === 'mantran_api_produto' || scrollToSection === 'produto_modelo' || scrollToSection === 'produto_buscar_lista' || scrollToSection === 'produto_buscar' || scrollToSection === 'produto_incluir' || scrollToSection === 'produto_alterar' || scrollToSection === 'produto_excluir') return <MantranAPI_Produto scrollToSection={scrollToSection} onNavigateToGerarToken={() => handleSelect('Mantran.API - Principal', 'mantran_api_gerar_token')} />;
+        return <MantranAPI_Login scrollToSection={scrollToSection} />;
       case 'Mantran - SQL Views':
         return <MantranSQLViews scrollToSection={scrollToSection} />;
       case 'Web API Interfaces':
@@ -202,11 +215,33 @@ const App = () => {
             isLoggedIn={isLoggedIn}
             onSelect={(section) => {
               const sectionToPage = {
+                'mantran_api_rota_livre': 'Mantran.API - Principal',
                 'mantran_api_gerar_token': 'Mantran.API - Principal',
+                'mantran_api_modelo_veiculo': 'Mantran.API - Principal',
+                'modelo_veiculo_modelo': 'Mantran.API - Principal',
+                'modelo_veiculo_buscar_lista': 'Mantran.API - Principal',
+                'modelo_veiculo_incluir': 'Mantran.API - Principal',
+                'modelo_veiculo_alterar': 'Mantran.API - Principal',
+                'modelo_veiculo_excluir': 'Mantran.API - Principal',
                 'mantran_api_login': 'Mantran.API - Principal',
                 'mantran_api_login_auth': 'Mantran.API - Principal',
                 'mantran_api_empresa': 'Mantran.API - Principal',
                 'mantran_api_filial': 'Mantran.API - Principal',
+                'mantran_api_veiculo_carroceria': 'Mantran.API - Principal',
+                'mantran_api_carroceria': 'Mantran.API - Principal',
+                'mantran_api_embalagem': 'Mantran.API - Principal',
+                'embalagem_modelo': 'Mantran.API - Principal',
+                'embalagem_buscar_lista': 'Mantran.API - Principal',
+                'embalagem_incluir': 'Mantran.API - Principal',
+                'embalagem_alterar': 'Mantran.API - Principal',
+                'embalagem_excluir': 'Mantran.API - Principal',
+                'mantran_api_produto': 'Mantran.API - Principal',
+                'produto_modelo': 'Mantran.API - Principal',
+                'produto_buscar_lista': 'Mantran.API - Principal',
+                'produto_buscar': 'Mantran.API - Principal',
+                'produto_incluir': 'Mantran.API - Principal',
+                'produto_alterar': 'Mantran.API - Principal',
+                'produto_excluir': 'Mantran.API - Principal',
                 'section_buscar_dados_view': 'Mantran - SQL Views',
                 'section_tms_leo_web': 'Sign In Sign On',
                 'section_consulta_pagina': 'Mantran.Leo_Madeiras.API',
