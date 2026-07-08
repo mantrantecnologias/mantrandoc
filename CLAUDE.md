@@ -1,295 +1,111 @@
-# CLAUDE.md — Mantran.Documentacao.API
+# Mantran.Docs
 
-Guia de referência para o assistente de IA sobre padrões, arquitetura e convenções deste projeto.
-
----
-
-## 1. Visão Geral do Projeto
-
-SPA React 19 de documentação técnica interna da empresa **Mantran** (transportadora). Documenta APIs .NET, serviços Windows e integrações. Não usa React Router — navegação é 100% via estado (`selectedContent` + `scrollToSection`).
-
-- **Stack:** React 19, Tailwind CSS, Create React App (react-scripts 5.0.1)
-- **Estilo:** Tailwind para layout/UI + classes CSS customizadas em `src/index.css` para o conteúdo das documentações
-- **Autenticação:** login local hardcoded em `src/components/Login.js` (`admin` / `senha456`) — só libera a seção de Serviços e submenus privados
+SPA React 19 + TypeScript de documentação técnica interna da empresa **Mantran** (transportadora). Documenta
+APIs .NET, serviços Windows e integrações legadas. Leia os arquivos de contexto antes de gerar código.
+Regras transversais do monorepo: `../../CLAUDE.md`.
 
 ---
 
-## 2. Estrutura de Arquivos
+## Monorepo
+
+App do monorepo **Mantran.Applications** (Turborepo + npm workspaces). App irmão: `apps/web` (mesma stack de
+build) e `apps/api` (fonte do login usado pela seção "Serviços" deste app). Config local: `.env` próprio
+(`apps/docs/.env`, prefixo `DOCS_*`), autossuficiente para deploy isolado; `.env` da raiz é fallback de dev.
+Execução: `npm run docs` (ou `dev`/`build`/`lint`/`check-types`/`test` via Turborepo) a partir da raiz.
+
+---
+
+## Stack
+
+React 19 · TypeScript · Vite · React Router · Tailwind CSS · Vitest + Testing Library · ESLint
+
+**Sem** TanStack Query / Zod / React Hook Form / Zustand — este app não tem CRUD nem formulários de negócio,
+só conteúdo estático + uma única chamada de login (ver §Autenticação). O único ponto de contato com HTTP é
+`authGetToken`, importado direto de `@repo/api-client` (mesmo pacote/endpoint que o `apps/web` usa).
+
+---
+
+## Estrutura de pastas
 
 ```
 src/
-├── App.js                          # Roteamento central e estado global
-├── index.css                       # Classes CSS do conteúdo das documentações
-├── components/
-│   ├── Header.js                   # Barra superior vermelha (bg-red-700)
-│   ├── Sidebar.js                  # Menu lateral com controle público/privado
-│   ├── Login.js                    # Tela de login
-│   └── ModalSearch.js              # Modal de busca global
-├── data/
-│   └── searchIndex.js              # Índice flat de todas as seções para busca
-└── pages/
-    ├── GenericContent.js           # Wrapper de página (título + conteúdo)
-    ├── MantranAPI_Principal/       # ← PASTA DO PROJETO PRINCIPAL
-    │   ├── MantranAPI_Login.js         (Arquitetura)
-    │   ├── MantranAPI_Login_Auth.js    (Login/Auth)
-    │   ├── MantranAPI_Empresa.js       (Empresa)
-    │   ├── MantranAPI_Filial.js        (Filial)
-    │   └── MantranAPI_GerarToken.js    (Gerar Token - público)
-    ├── MantranSQLViews/
-    ├── LeoMadeirasAPI/
-    ├── SignIn_SignOn/
-    ├── WebAPI.CalculoFrete/
-    ├── WebAPI.Conhecimento/
-    ├── LocalizeCargas_Rodoviario/
-    ├── WebAPIMobile/
-    ├── Routeasy_Comprovei_Leo/
-    └── Servico/
-        ├── Bandeirantes/
-        ├── LeoMadeiras/
-        └── Shopee/
+├── app/
+│   ├── main.tsx              # bootstrap
+│   ├── App.tsx                # layout (Header + Sidebar/Login + ModalSearch) + <Routes> de topo
+│   ├── router/AppRoutes.tsx   # rotas de conteúdo, uma por página de documentação
+│   └── pages/                 # HomePage, LoginPage — páginas do app, não de conteúdo de domínio
+├── assets/                    # logo
+├── shared/
+│   ├── components/            # Header, Sidebar, ModalSearch, GenericContent, TokenNotice
+│   ├── hooks/                 # useAuth, useScrollToHash
+│   ├── data/                  # searchIndex.ts
+│   ├── config/                # apiConfig.ts (URL da API LEGADA documentada — não confundir com a API do monorepo)
+│   └── routes/paths.ts        # constantes de rota (path por página)
+└── pages/                     # conteúdo de documentação, agrupado por família (prefixo de domínio)
+    ├── mantranApi/ (+ seguradora/)
+    ├── sqlViews/, leoMadeirasApi/, signInSignOn/, webApiCalculoFrete/, webApiConhecimento/, webApi/
+    └── servicos/ (routeasy/, leoMadeiras/, shopee/, bandeirantes/)
 ```
+
+Aliases: `@app/*`, `@assets/*`, `@shared/*`, `@pages/*`. Nomenclatura de página: sufixo `Page.tsx`
+(`MantranApiEmpresaPage.tsx`). Testes em `tests/` espelhando `src/`.
 
 ---
 
-## 3. Como a Navegação Funciona
+## Roteamento
 
-`App.js` mantém dois estados:
-- `selectedContent` — string que identifica qual página renderizar (ex: `'Mantran.API - Principal'`)
-- `scrollToSection` — string com o id da seção para scroll automático (ex: `'mantran_api_empresa'`)
+Cada página de documentação é uma rota real (`react-router-dom`), declarada em `src/shared/routes/paths.ts`
+e registrada em `src/app/router/AppRoutes.tsx`. **Não existe mais** o padrão antigo de navegação por estado
+(`selectedContent`/`scrollToSection` + `sectionToPage` + switch gigante em `App.js`) — isso foi eliminado na
+migração para TypeScript (2026-07-02).
 
-### 3.1 Fluxo ao clicar no sidebar
+Sub-seções dentro de uma mesma página (ex.: os 5 endpoints de Embalagem) usam **hash de URL**
+(`/mantran-api/embalagem#embalagem_incluir`) em vez de uma segunda rota. O scroll suave até o elemento com
+esse `id` é feito automaticamente pelo hook `useScrollToHash` (`@shared/hooks/useScrollToHash`), chamado uma
+única vez dentro de `GenericContent` — páginas de conteúdo **não** implementam scroll próprio.
 
-```
-Sidebar clica em sub.id (ex: 'mantran_api_empresa')
-    ↓
-App.js: sectionToPage['mantran_api_empresa'] → 'Mantran.API - Principal'
-    ↓
-handleSelect('Mantran.API - Principal', 'mantran_api_empresa')
-    ↓
-renderContent() switch case 'Mantran.API - Principal'
-    ↓
-if (scrollToSection === 'mantran_api_empresa') return <MantranAPI_Empresa .../>
-```
+### Checklist para adicionar uma nova página de documentação
 
-### 3.2 sectionToPage (App.js)
-
-Todo novo submenu DEVE ter uma entrada aqui:
-```js
-const sectionToPage = {
-  'mantran_api_gerar_token':  'Mantran.API - Principal',
-  'mantran_api_login':        'Mantran.API - Principal',
-  'mantran_api_login_auth':   'Mantran.API - Principal',
-  'mantran_api_empresa':      'Mantran.API - Principal',
-  'mantran_api_filial':       'Mantran.API - Principal',
-  // ... outras páginas
-};
-```
-
-O valor DEVE ser idêntico ao case no switch de `renderContent()`.
-
-### 3.3 Switch em renderContent() (App.js)
-
-Para páginas com múltiplos submenus (como Mantran.API - Principal):
-```js
-case 'Mantran.API - Principal':
-  if (scrollToSection === 'mantran_api_gerar_token') return <MantranAPI_GerarToken ... />;
-  if (scrollToSection === 'mantran_api_login_auth')  return <MantranAPI_Login_Auth ... />;
-  if (scrollToSection === 'mantran_api_empresa')     return <MantranAPI_Empresa ... />;
-  if (scrollToSection === 'mantran_api_filial')      return <MantranAPI_Filial ... />;
-  return <MantranAPI_Login ... />;  // default = Arquitetura
-```
+- [ ] Criar arquivo em `src/pages/<familia>/<Entidade>Page.tsx` (agrupar por família quando 2+ páginas
+      compartilham prefixo de domínio — mesma regra do `apps/web`).
+- [ ] Primeira `<section>` da página tem `id` igual ao anchor que será usado nos links de busca/deep-link.
+- [ ] Página pública ou privada: incluir `<TokenNotice />` (`@shared/components/TokenNotice`) logo no topo do
+      `content`, antes do primeiro `<h4>` — aviso obrigatório em toda página (ver §Padrões de documentação).
+- [ ] Adicionar a rota em `src/shared/routes/paths.ts` e registrar `<Route>` em `src/app/router/AppRoutes.tsx`.
+- [ ] `src/shared/components/Sidebar.tsx`: adicionar entrada no array `navItems`/`servicesItems`
+      (`leaf`/`nested`/`group`, com `private: true` quando aplicável).
+- [ ] `src/shared/data/searchIndex.ts`: adicionar uma ou mais entradas (`path`, `hash`, `page`, `label`,
+      `content`, `private?`) para cada seção pesquisável da página.
 
 ---
 
-## 4. Controle de Acesso (Público vs. Privado)
+## Autenticação
 
-### 4.1 Seções inteiras privadas
+Login real via `authGetToken` (`@repo/api-client`, `POST /api/auth/token` da `apps/api`), autenticando
+sempre o usuário técnico **`suporte.mantran`** (campo de usuário fixo/readonly na tela de login — só a senha
+é digitada). Login bem-sucedido libera a seção "Serviços" no Sidebar. Estado de sessão fica em memória
+(`useAuth`, `@shared/hooks/useAuth`) — sem persistência, reseta ao recarregar a página. Sem Zustand: o hook é
+instanciado uma vez em `App.tsx` e as props (`isLoggedIn`/`login`/`isLoading`/`error`) descem para
+`Header`/`Sidebar`/`LoginPage`.
 
-A seção **Serviços** no sidebar só aparece quando `isLoggedIn === true`.
+**Nota:** isso não é um controle de acesso real às páginas — o Sidebar só *esconde* os links privados; as
+páginas em si continuam no bundle e acessíveis por URL direta a quem souber o path. Mesmo comportamento do
+app anterior (o switch de `App.js` nunca checava `isLoggedIn`), não é uma regressão.
 
-### 4.2 Submenus privados dentro de uma seção pública
-
-No `Sidebar.js`, cada subitem pode ter a flag `private: true`:
-```js
-subitems: [
-  { id: 'mantran_api_gerar_token', label: 'Gerar Token' },           // público
-  { id: 'mantran_api_login',       label: 'Arquitetura', private: true }, // privado
-  { id: 'mantran_api_login_auth',  label: 'Login',       private: true }, // privado
-  { id: 'mantran_api_empresa',     label: 'Empresa',     private: true }, // privado
-  { id: 'mantran_api_filial',      label: 'Filial',      private: true }, // privado
-]
-```
-
-A função `visibleSubitems()` filtra: `!sub.private || isLoggedIn`.
-Submenus privados exibem um ícone de cadeado pequeno ao lado do nome.
+Requer que `API_CORS_ALLOWED` (config da `apps/api`) inclua a origem de dev deste app — configuração de
+ambiente, fora do código deste repo.
 
 ---
 
-## 5. Padrão de uma Página de Documentação
+## Controle de acesso (Público vs. Privado)
 
-### 5.1 Estrutura base
-```jsx
-import React, { useEffect } from 'react';
-import GenericContent from '../GenericContent';
-
-const MinhaPagina = ({ scrollToSection, onNavigateToGerarToken }) => {
-
-  useEffect(() => {
-    if (scrollToSection) {
-      const el = document.getElementById(scrollToSection);
-      if (el) setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "start" }), 300);
-    }
-  }, [scrollToSection]);
-
-  const content = (
-    <div className="conteudo-div">
-
-      {/* AVISO DE TOKEN — incluir em TODAS as páginas de documentação, públicas e privadas */}
-      <div style={{ background:'#fef9c3', border:'1px solid #fbbf24', borderRadius:'8px',
-        padding:'14px 18px', marginBottom:'24px', display:'flex', alignItems:'center',
-        gap:'10px', fontSize:'0.92rem', color:'#78350f' }}>
-        <span style={{ fontSize:'1.1rem' }}>⚠</span>
-        <span>
-          Para acessar os endpoints desta documentação é necessário um token de acesso.{' '}
-          <button onClick={onNavigateToGerarToken} style={{ background:'none', border:'none',
-            padding:0, color:'#b91c1c', fontWeight:700, cursor:'pointer',
-            textDecoration:'underline', fontSize:'inherit' }}>
-            Clique aqui para ver como gerar o token
-          </button>.
-        </span>
-      </div>
-
-      <h4>Documentação Técnica — NomeController (TMS Web)</h4>
-
-      <section id="id_da_primeira_secao">
-        <h3>1. Visão Geral</h3>
-        <p>...</p>
-      </section>
-
-    </div>
-  );
-
-  return <GenericContent title="Mantran.API — NomePágina" content={content} />;
-};
-
-export default MinhaPagina;
-```
-
-### 5.2 O ID da primeira section DEVE ser o mesmo que o id do submenu no Sidebar
-```js
-// Sidebar: { id: 'mantran_api_filial', label: 'Filial', private: true }
-// Página:  <section id="mantran_api_filial">
-```
+A seção **Serviços** no sidebar só aparece quando `isLoggedIn === true`. Dentro de "Mantran.API - Principal",
+cada subitem pode ter a flag `private: true` — filtrada em `Sidebar.tsx` (`visibleLeaves`). Submenus privados
+exibem um ícone de cadeado; públicos, um check verde.
 
 ---
 
-## 6. Classes CSS do Conteúdo (`src/index.css`)
-
-| Classe | Uso |
-|---|---|
-| `.conteudo-div` | Wrapper externo de toda documentação. `padding: 40px`, `max-width: 1000px` |
-| `.conteudo-div section` | Card branco com sombra e efeito hover de elevação |
-| `.conteudo-div h3` | Título de seção na cor primária (`--primary-color`) |
-| `.conteudo-div h4` | Subtítulo de seção |
-| `.conteudo-div p` | Parágrafo em `#546e7a` |
-| `.code-block` | Bloco de código. Fundo escuro `#1e293b`, fonte monospace |
-| `.data-table` | Tabela estilizada. Header com texto na cor primária, bordas arredondadas |
-
-**Cor primária:** `#b91c1c` (vermelho `red-700` do Tailwind — igual à barra do Header)
-
-### 6.1 Uso no JSX
-```jsx
-<pre className="code-block">{`código aqui`}</pre>
-<table className="data-table">...</table>
-```
-
----
-
-## 7. Índice de Busca (`src/data/searchIndex.js`)
-
-Array flat de objetos. Todo novo submenu/seção DEVE ter entrada aqui:
-```js
-{
-  page: "Mantran.API - Principal",   // DEVE bater com o case do switch em App.js
-  id: "mantran_api_filial",          // DEVE bater com o id da <section> na página
-  label: "Filial — Visão Geral",     // texto exibido no resultado da busca
-  content: "palavras chave separadas por espaço para busca full-text"
-}
-```
-
-**Regra:** `page` deve ser idêntico ao valor do switch case em `renderContent()`. Múltiplas seções da mesma página têm o mesmo `page` e `id`s diferentes.
-
----
-
-## 8. Passando Navegação para Páginas Privadas
-
-Páginas que precisam de link para "Gerar Token" recebem a prop `onNavigateToGerarToken`:
-
-**Em App.js:**
-```jsx
-if (scrollToSection === 'mantran_api_filial')
-  return <MantranAPI_Filial
-    scrollToSection={scrollToSection}
-    onNavigateToGerarToken={() => handleSelect('Mantran.API - Principal', 'mantran_api_gerar_token')}
-  />;
-```
-
-**Na página:**
-```jsx
-const MinhaPagina = ({ scrollToSection, onNavigateToGerarToken }) => { ... }
-```
-
----
-
-## 9. Checklist para Adicionar um Novo Submenu
-
-- [ ] Criar arquivo em `src/pages/NomePasta/NomePagina.js`
-- [ ] Primeira `<section>` da página tem `id` igual ao id do submenu
-- [ ] Incluir aviso de token se a página for privada
-- [ ] Sidebar.js: adicionar `{ id: '...', label: '...', private: true/false }` no array subitems correto
-- [ ] App.js: adicionar import da página
-- [ ] App.js: adicionar entrada em `sectionToPage`
-- [ ] App.js: adicionar `if (scrollToSection === '...')` no switch case
-- [ ] App.js: passar `onNavigateToGerarToken` se a página for privada
-- [ ] `searchIndex.js`: adicionar entradas para todas as seções da página
-
----
-
-## 10. Páginas Existentes e seus IDs
-
-### APIs (seção pública no sidebar)
-
-| Submenu | ID | Página | Arquivo |
-|---|---|---|---|
-| Gerar Token | `mantran_api_gerar_token` | Mantran.API - Principal | MantranAPI_GerarToken.js |
-| Arquitetura *(privado)* | `mantran_api_login` | Mantran.API - Principal | MantranAPI_Login.js |
-| Login *(privado)* | `mantran_api_login_auth` | Mantran.API - Principal | MantranAPI_Login_Auth.js |
-| Empresa *(privado)* | `mantran_api_empresa` | Mantran.API - Principal | MantranAPI_Empresa.js |
-| Filial *(privado)* | `mantran_api_filial` | Mantran.API - Principal | MantranAPI_Filial.js |
-| Views | `section_buscar_dados_view` | Mantran - SQL Views | MantranSQLViews.js |
-| Consulta NF | `section_consulta_pagina` | Mantran.Leo_Madeiras.API | LeoMadeirasAPI.js |
-| Interfaces SaaS | `section_interfaces_saas` | Web API Interfaces | Interfaces_SaaS.js |
-| Integração SSO | `section_tms_leo_web` | Sign In Sign On | TMSLeoWeb.js |
-| Cotação | `section_api_nader_contacao` | Web API Cálculo de Frete | WebAPI.CalculoFrete_Nader.js |
-| Baixa CTe | `section_api_difalux_baixa_cte` | Web API Conhecimento | API_BaixaCTe_Difalux.js |
-| Localize Cargas | `section_localize_cargas` | Web API - Principal | LocalizeCargas_Rodoviario.js |
-| Web API Mobile | `section_mobile` | WebAPIMobile | WebAPIMobile.js |
-
-### Serviços (seção privada — só aparece logado)
-
-| Submenu | ID | Página | Arquivo |
-|---|---|---|---|
-| RouteEasy | `section_routeasy_manifesto` | Mantran x RouteEasy | LeoMadeiras_BaixarManifesto.js |
-| Baixa NF Leo | `leo_nf` | Leo Madeiras | LeoMadeiras_Servico_BaixaNF.js |
-| Geração Automática | `leo_auto` | Leo Madeiras | LeoMadeiras_Servico_GeracaoAutomatica.js |
-| Gerar CTe | `shopee_cte` | Shopee | Shopee_Servico_GerarCTe.js |
-| MultiCTe | `shopee_multi` | Shopee | Shopee_Servico_MultiCTe.js |
-| Geração Envio Docs | `shopee_envio` | Shopee | Shopee_Servico_GeracaoEnvioDocumentos.js |
-| Bandeirantes | `bandeirantes_servico_mantran_vira_section` | Bandeirantes | Bandeirantes_Servico_Mantran_Vira.js |
-
----
-
-## 11. Padrões de Documentação de Endpoints .NET
+## Padrões de documentação de endpoints .NET
 
 Ao receber um controller C# para documentar, seguir esta estrutura de seções:
 
@@ -300,10 +116,13 @@ Ao receber um controller C# para documentar, seguir esta estrutura de seções:
 
 ### Regras obrigatórias de conteúdo
 
-- **Aviso de token em TODAS as páginas** — O banner amarelo de token (`onNavigateToGerarToken`) deve aparecer no topo de toda página de documentação, seja pública ou privada no sidebar.
+- **`<TokenNotice />` em toda página da seção "APIs"** (pública ou privada no sidebar) — endpoints documentados
+  aí exigem token de acesso, então o aviso deve aparecer no topo do `content`. **Não se aplica** às páginas da
+  seção "Serviços" (`pages/servicos/`) — documentam integrações/rotinas internas, não endpoints que o leitor
+  chama diretamente com um token, então não recebem o aviso (assim já era no app original).
 - **Nunca expor roles** — Nomes de roles (`tms_web`, `rota_livre`, etc.) são informação interna e **não devem aparecer** na documentação. Isso inclui: coluna "Role" na tabela de visão geral, seções de autenticação que mencionam a role, e descrições de erro 403. O 403 deve ser descrito simplesmente como `"Sem permissão de acesso"`.
 
-### Padrão de resposta de erro (todos os endpoints seguem este envelope):
+### Padrão de resposta de erro (endpoints da API legada/TMS documentados aqui):
 ```json
 {
   "sucesso": false,
@@ -323,7 +142,7 @@ Ao receber um controller C# para documentar, seguir esta estrutura de seções:
 
 ---
 
-## 12. Informações Técnicas da API .NET
+## Informações técnicas da API legada (TMS) documentada por este app
 
 - **BaseController** — todos os controllers herdam. Métodos: `Resposta<T>()` e `GetItem<T>(key)`
 - **Conexao_Transp** — objeto de conexão multi-tenant injetado via `HttpContext.Items["CONEXAO"]` pelo `ConexaoMiddleware`
@@ -331,31 +150,9 @@ Ao receber um controller C# para documentar, seguir esta estrutura de seções:
 - **Role obrigatória em todos os endpoints:** `[Authorize(Roles = "tms_web")]`
 - **Permissão extra:** `Funcao_Negocio.Checar_Permissao_Processo(codigo, descricao, "Parametro", obj_cn)`
 
----
-
-## 13. URL Base da API (centralizada)
-
-A URL base do servidor está centralizada em `src/config/apiConfig.js`:
-```js
-export const API_BASE_URL = 'http://api.mantran.eti.br:35390';
-```
-
-**Uso em páginas de documentação:**
-```jsx
-import { API_BASE_URL } from '../../config/apiConfig';
-
-// Em template literals de code-block:
-<pre className="code-block">{`POST ${API_BASE_URL}/api/SeuController/seu-endpoint`}</pre>
-
-// Em células JSX (ex: tabela):
-<code>{API_BASE_URL}/api/SeuController/seu-endpoint</code>
-```
-
-Se o domínio mudar, alterar apenas `apiConfig.js` reflete em toda a documentação.
-
----
-
-## 14. Endpoint de Produção para Gerar Token
+`src/shared/config/apiConfig.ts` centraliza a URL de produção dessa API legada (`API_BASE_URL`) — é
+**conteúdo de documentação** (usado em exemplos de código dentro das próprias páginas), não infraestrutura
+deste app. Não confundir com `apps/api` (API nova do monorepo, usada só para o login de `suporte.mantran`).
 
 ```
 POST http://api.mantran.eti.br:35390/api/Token/gerar-token
@@ -365,3 +162,16 @@ Content-Type: application/json
 ```
 
 Retorna string JWE com validade de 8 horas.
+
+---
+
+## Tasks
+
+### Concluídas recentemente
+
+- **✅ Migração para TypeScript + arquitetura do monorepo** (2026-07-02) — CRA → Vite, navegação por estado →
+  React Router (páginas viram rotas reais; sub-seções viram hash de URL + `useScrollToHash`), login
+  hardcoded → `authGetToken` real (`suporte.mantran`), `.git` interno removido (era o repo standalone
+  `Mantran.Documentacao.API`), conflito de merge em `App.js`/`Sidebar.js` resolvido como união (Seguradora +
+  Produto/RotaLivre/grupos), arquivos órfãos e artefatos de build antigos removidos. Design em
+  `.claude/specs/2026-07-02-migracao-typescript-arquitetura-design.md`.
