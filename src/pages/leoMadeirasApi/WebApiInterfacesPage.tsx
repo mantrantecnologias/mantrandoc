@@ -1,13 +1,13 @@
-import React from "react";
-import GenericContent from "../pages/GenericContent";
+import GenericContent from "@shared/components/GenericContent";
 
-const DocumentacaoCompleta = () => {
+function WebApiInterfacesPage() {
   const content = (
     <div className="conteudo-div">
 
-      {/* ---------------------- 1º DOCUMENTO ---------------------- */}
       <h4>Documentação – Interfaces de Integração Mantran</h4>
 
+      {
+      /*
       <h3>Sumário</h3>
       <ol>
         <li><strong>Objetivo</strong></li>
@@ -18,6 +18,8 @@ const DocumentacaoCompleta = () => {
         <li><strong>5. Contas Frete Retorno</strong></li>
         <li><strong>Conclusão</strong></li>
       </ol>
+      */
+      }
 
       {/* OBJETIVO */}
       <section id="section_interfaces_saas">
@@ -176,113 +178,9 @@ const DocumentacaoCompleta = () => {
         <h3>Conclusão</h3>
         <p>
           Este documento consolida as interfaces essenciais de comunicação com a API Mantran,
-          organizando cada endpoint, estrutura de requisição e campos obrigatórios.
+          organizando cada endpoint, estrutura de requisição e campos obrigatórios,
+          servindo como referência para integrações e suporte técnico.
         </p>
-      </section>
-
-
-      {/* ---------------------- 2º DOCUMENTO ---------------------- */}
-
-      <hr />
-      <h4>Documentação da API – Consulta de Notas Fiscais Leo Tech x Mantran</h4>
-
-      <h3>Sumário</h3>
-      <ol>
-        <li><strong>Visão Geral</strong></li>
-        <li><strong>Autenticação</strong></li>
-        <li><strong>Consulta com Paginação</strong></li>
-        <li><strong>Consulta sem Paginação</strong></li>
-        <li><strong>Propriedades da Requisição</strong></li>
-        <li><strong>Propriedades da Resposta</strong></li>
-      </ol>
-
-      {/* 1. Visão Geral */}
-      <section id="section_consulta_pagina">
-        <h3>1. Visão Geral</h3>
-        <p>
-          Endpoint desenvolvido para consulta de notas fiscais, com ou sem paginação,
-          permitindo múltiplos filtros dinâmicos.
-        </p>
-      </section>
-
-      {/* 2. Autenticação */}
-      <section id="autenticacao">
-        <h3>2. Autenticação</h3>
-
-        <pre>{`POST http://138.59.144.69:35391/api/token`}</pre>
-
-        <pre>{`{
-  "Login": "client-leotech-leomadeiras-tst",
-  "Senha": "VwhJ4ZJ48f97",
-  "TipoUsuario": "aplicacao"
-}`}</pre>
-      </section>
-
-      {/* 3 – com paginação */}
-      <section>
-        <h3>3. Buscar dados da nota fiscal – com paginação</h3>
-
-        <pre>{`POST http://138.59.144.69:35391/api/notasfiscais/nf-consulta`}</pre>
-
-        <pre>{`{
-  "NR_NF": "",
-  "nR_Remessa": "",
-  "ativar_Paginacao": true,
-  "pagina": 3,
-  "itensPorPagina": 10,
-  "dt_Emissao_Inicio": "2025-10-25",
-  "dt_Emissao_Final": "2025-12-25"
-}`}</pre>
-      </section>
-
-      {/* 4 – sem paginação */}
-      <section>
-        <h3>4. Buscar dados da nota fiscal – sem paginação</h3>
-
-        <pre>{`{
-  "NR_NF": "",
-  "nR_Remessa": "",
-  "ativar_Paginacao": false,
-  "dt_Emissao_Inicio": "2025-10-25",
-  "dt_Emissao_Final": "2025-12-25"
-}`}</pre>
-      </section>
-
-      {/* 5 – Propriedades Request */}
-      <section>
-        <h3>5. Propriedades da Requisição</h3>
-        <ul>
-          <li><strong>NR_NF</strong> — obrigatório (pode ser vazio)</li>
-          <li><strong>nR_Remessa</strong> — opcional</li>
-          <li><strong>ativar_Paginacao</strong> — obrigatório</li>
-          <li><strong>pagina</strong> — obrigatório se ativar_Paginacao = true</li>
-          <li><strong>itensPorPagina</strong> — idem</li>
-          <li><strong>dt_Emissao_Inicio</strong> — obrigatório</li>
-          <li><strong>dt_Emissao_Final</strong> — obrigatório</li>
-        </ul>
-      </section>
-
-      {/* 6 – Propriedades Response */}
-      <section>
-        <h3>6. Propriedades da Resposta</h3>
-        <ul>
-          <li>nR_NF</li>
-          <li>nR_Pedido</li>
-          <li>nR_Remessa</li>
-          <li>vR_Frete</li>
-          <li>nome_Transportadora</li>
-          <li>nR_CTe</li>
-          <li>peso_NF</li>
-          <li>cabecalho</li>
-          <li>loja</li>
-          <li>placa</li>
-          <li>cD_Rota</li>
-          <li>dT_Emissao_NF</li>
-          <li>dT_Emissao_CTe</li>
-          <li>tipo_Veiculo</li>
-          <li>observacao</li>
-          <li>qT_KM</li>
-        </ul>
       </section>
 
     </div>
@@ -290,11 +188,10 @@ const DocumentacaoCompleta = () => {
 
   return (
     <GenericContent
-      title="Documentação – API Mantran Completa"
+      title="Web API – Interfaces | SAAS"
       content={content}
-      attachments={[]}
     />
   );
-};
+}
 
-export default DocumentacaoCompleta;
+export default WebApiInterfacesPage;

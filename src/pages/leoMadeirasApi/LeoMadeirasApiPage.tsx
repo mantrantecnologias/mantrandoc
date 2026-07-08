@@ -1,7 +1,6 @@
-import React from 'react';
-import GenericContent from '../GenericContent';
+import GenericContent from "@shared/components/GenericContent";
 
-const LeoMadeirasAPI = () => {
+function LeoMadeirasApiPage() {
   const content = (
     <div className="conteudo-div">
       <h4>Documentação da API – Consulta de Notas Fiscais e demais dados </h4>
@@ -197,9 +196,8 @@ Content-Type: application/json`}</pre>
     <GenericContent
       title="Mantran – Consulta de Notas Fiscais"
       content={content}
-      attachments={[]}
     />
   );
-};
+}
 
-export default LeoMadeirasAPI;
+export default LeoMadeirasApiPage;
