@@ -56,7 +56,7 @@ const navItems: NavSection[] = [
         ],
       },
       leaf(paths.mantranApi.arquitetura, "Arquitetura", { private: true }),
-      leaf(paths.mantranApi.login, "Login", { private: true }),
+      leaf(paths.mantranApi.login, "Login"),
       leaf(paths.mantranApi.empresa, "Empresa", { private: true }),
       leaf(paths.mantranApi.filial, "Filial", { private: true }),
     ],

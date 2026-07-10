@@ -22,7 +22,7 @@ function TokenNotice() {
       <span>
         Para acessar os endpoints desta documentação é necessário um token de acesso.{" "}
         <Link
-          to={paths.mantranApi.gerarToken}
+          to={paths.mantranApi.login}
           style={{
             color: "#b91c1c",
             fontWeight: 700,

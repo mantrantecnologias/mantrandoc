@@ -163,7 +163,6 @@ export const documentationIndex: SearchIndexEntry[] = [
     path: paths.mantranApi.login,
     hash: "mantran_api_login_auth",
     page: "Mantran.Applications - API",
-    private: true,
     label: "Login — Visão Geral (AuthController, JWT ES256 JWE)",
     content:
       "autenticacao autorizacao login token JWT JWS JWE ES256 ECDSA AuthController api/auth cookie HttpOnly rate limiting",
@@ -172,7 +171,6 @@ export const documentationIndex: SearchIndexEntry[] = [
     path: paths.mantranApi.login,
     hash: "login_fluxo",
     page: "Mantran.Applications - API",
-    private: true,
     label: "Login — Fluxo de Login (passo a passo)",
     content:
       "fluxo login AuthService LoginAsync usuario senha base central tenant FixedTimeEquals texto plano token",
@@ -181,7 +179,6 @@ export const documentationIndex: SearchIndexEntry[] = [
     path: paths.mantranApi.login,
     hash: "cookie",
     page: "Mantran.Applications - API",
-    private: true,
     label: "Login — O Cookie de Sessão",
     content: "cookie HttpOnly Secure SameSite Path Expires auth_token logout XSS",
   },
@@ -189,7 +186,6 @@ export const documentationIndex: SearchIndexEntry[] = [
     path: paths.mantranApi.login,
     hash: "geracao_token",
     page: "Mantran.Applications - API",
-    private: true,
     label: "Login — Geração do Token ES256 + JWE",
     content:
       "geracao token JWT ES256 ECDSA P-256 JWE ECDH-ES A256KW A256GCM jose-jwt criptografia curva eliptica",
@@ -198,7 +194,6 @@ export const documentationIndex: SearchIndexEntry[] = [
     path: paths.mantranApi.login,
     hash: "csrf",
     page: "Mantran.Applications - API",
-    private: true,
     label: "Login — Proteção CSRF (double-submit cookie)",
     content:
       "CSRF double-submit cookie XSRF-TOKEN X-XSRF-TOKEN CsrfProtectionMiddleware 403 novidade",
@@ -207,7 +202,6 @@ export const documentationIndex: SearchIndexEntry[] = [
     path: paths.mantranApi.login,
     hash: "claims_token",
     page: "Mantran.Applications - API",
-    private: true,
     label: "Login — Claims do Token e Resolução do Tenant",
     content:
       "claims sub jti iat exp iss aud id_base_referencia nome_base_dados role cd_empresa TenantConnectionMiddleware",
@@ -216,7 +210,6 @@ export const documentationIndex: SearchIndexEntry[] = [
     path: paths.mantranApi.login,
     hash: "autorizacao",
     page: "Mantran.Applications - API",
-    private: true,
     label: "Login — Autorização (papel do JWT e permissão fina)",
     content:
       "autorizacao Authorize Roles papel permissao fina AllowAnonymous 401 403 revogacao Bearer logout",
