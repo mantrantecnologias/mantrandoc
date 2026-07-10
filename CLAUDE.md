@@ -21,7 +21,7 @@ React 19 · TypeScript · Vite · React Router · Tailwind CSS · Vitest + Testi
 
 **Sem** TanStack Query / Zod / React Hook Form / Zustand — este app não tem CRUD nem formulários de negócio,
 só conteúdo estático + uma única chamada de login (ver §Autenticação). O único ponto de contato com HTTP é
-`authGetToken`, importado direto de `@repo/api-client` (mesmo pacote/endpoint que o `apps/web` usa).
+`authLogin`, importado direto de `@repo/api-client` (mesmo pacote/endpoint que o `apps/web` usa).
 
 ---
 
@@ -81,12 +81,12 @@ esse `id` é feito automaticamente pelo hook `useScrollToHash` (`@shared/hooks/u
 
 ## Autenticação
 
-Login real via `authGetToken` (`@repo/api-client`, `POST /api/auth/token` da `apps/api`), autenticando
-sempre o usuário técnico **`suporte.mantran`** (campo de usuário fixo/readonly na tela de login — só a senha
-é digitada). Login bem-sucedido libera a seção "Serviços" no Sidebar. Estado de sessão fica em memória
-(`useAuth`, `@shared/hooks/useAuth`) — sem persistência, reseta ao recarregar a página. Sem Zustand: o hook é
-instanciado uma vez em `App.tsx` e as props (`isLoggedIn`/`login`/`isLoading`/`error`) descem para
-`Header`/`Sidebar`/`LoginPage`.
+Login real via `authLogin` (`@repo/api-client`, `POST /api/auth/login` da `apps/api` — grava o cookie
+`HttpOnly`), autenticando sempre o usuário técnico **`suporte.mantran`** (campo de usuário fixo/readonly na
+tela de login — só a senha é digitada). Login bem-sucedido libera a seção "Serviços" no Sidebar. O booleano
+`isLoggedIn` fica em memória (`useAuth`, `@shared/hooks/useAuth`) — sem persistência, reseta ao recarregar a
+página; a sessão em si vive no cookie, não em localStorage. Sem Zustand: o hook é instanciado uma vez em
+`App.tsx` e as props (`isLoggedIn`/`login`/`isLoading`/`error`) descem para `Header`/`Sidebar`/`LoginPage`.
 
 **Nota:** isso não é um controle de acesso real às páginas — o Sidebar só *esconde* os links privados; as
 páginas em si continuam no bundle e acessíveis por URL direta a quem souber o path. Mesmo comportamento do
