@@ -2,7 +2,6 @@ export const paths = {
   home: "/",
   login: "/login",
   mantranApi: {
-    gerarToken: "/mantran-api/gerar-token",
     arquitetura: "/mantran-api/arquitetura",
     login: "/mantran-api/login",
     empresa: "/mantran-api/empresa",

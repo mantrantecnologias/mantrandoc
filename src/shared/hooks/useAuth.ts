@@ -1,17 +1,8 @@
 import { useCallback, useState } from "react";
-import axios from "axios";
+import { authLogin, authLogout } from "@repo/api-client";
 
 /** Único usuário técnico habilitado a liberar a seção "Serviços" do docs. */
 export const SUPPORT_USERNAME = "suporte.mantran";
-
-const TOKEN_STORAGE_KEY = "accessToken";
-
-const setToken = (token: string): void => localStorage.setItem(TOKEN_STORAGE_KEY, token);
-const clearToken = (): void => localStorage.removeItem(TOKEN_STORAGE_KEY);
-
-interface TokenResponse {
-  accessToken: string;
-}
 
 export function useAuth() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -22,11 +13,7 @@ export function useAuth() {
     setIsLoading(true);
     setError(null);
     try {
-      const { data } = await axios.post<TokenResponse>("/api/auth/token", {
-        username: SUPPORT_USERNAME,
-        password,
-      });
-      setToken(data.accessToken);
+      await authLogin({ username: SUPPORT_USERNAME, password });
       setIsLoggedIn(true);
       return true;
     } catch {
@@ -38,7 +25,8 @@ export function useAuth() {
   }, []);
 
   const logout = useCallback(() => {
-    clearToken();
+    // Best-effort: derruba o cookie no servidor sem bloquear o logout local na resposta da rede.
+    authLogout().catch(() => {});
     setIsLoggedIn(false);
   }, []);
 

@@ -157,6 +157,14 @@ function MantranApiFilialPage() {
           request.
         </p>
         <p>
+          <strong>ℹ</strong> São <strong>obrigatórios</strong> (400 se ausentes/vazios): <code>Nome</code>,{" "}
+          <code>Endereco</code>, <code>NrEndereco</code>, <code>Bairro</code>, <code>Cep</code> e{" "}
+          <code>Cgc</code>. Além disso, <code>CdFilial</code> (na URL) precisa ser{" "}
+          <strong>numérico</strong>, e <code>Cgc</code> precisa ser um CNPJ com{" "}
+          <strong>dígito verificador válido</strong> — ambos verificados pelo <code>FilialValidator</code>{" "}
+          (paridade com o <code>Consiste_Filial</code> do sistema legado).
+        </p>
+        <p>
           <strong>ℹ</strong> Os nomes nas tabelas abaixo são as propriedades C# (PascalCase). No JSON
           trafegado pela API (request e response) esses mesmos campos aparecem em{" "}
           <strong>camelCase</strong> — por isso os exemplos de requisição/resposta desta página usam{" "}
@@ -170,9 +178,9 @@ function MantranApiFilialPage() {
           </thead>
           <tbody>
             <tr><td><code>Sigla</code></td><td>string?</td><td>3</td></tr>
-            <tr><td><code>Cgc</code></td><td>string?</td><td>14</td></tr>
+            <tr><td><code>Cgc</code></td><td>string</td><td>14 — <strong>obrigatório</strong>, CNPJ com dígito verificador válido</td></tr>
             <tr><td><code>Ie</code></td><td>string?</td><td>18</td></tr>
-            <tr><td><code>Nome</code></td><td>string?</td><td>50</td></tr>
+            <tr><td><code>Nome</code></td><td>string</td><td>50 — <strong>obrigatório</strong></td></tr>
           </tbody>
         </table>
 
@@ -182,12 +190,12 @@ function MantranApiFilialPage() {
             <tr><th>Campo</th><th>Tipo</th><th>Tamanho máx.</th></tr>
           </thead>
           <tbody>
-            <tr><td><code>Endereco</code></td><td>string?</td><td>100</td></tr>
+            <tr><td><code>Endereco</code></td><td>string</td><td>100 — <strong>obrigatório</strong></td></tr>
             <tr><td><code>Numero</code></td><td>string?</td><td>10</td></tr>
-            <tr><td><code>NrEndereco</code></td><td>string?</td><td>10</td></tr>
-            <tr><td><code>Bairro</code></td><td>string?</td><td>80</td></tr>
+            <tr><td><code>NrEndereco</code></td><td>string</td><td>10 — <strong>obrigatório</strong></td></tr>
+            <tr><td><code>Bairro</code></td><td>string</td><td>80 — <strong>obrigatório</strong></td></tr>
             <tr><td><code>Cidade</code></td><td>string?</td><td>80</td></tr>
-            <tr><td><code>Cep</code></td><td>string?</td><td>8</td></tr>
+            <tr><td><code>Cep</code></td><td>string</td><td>8 — <strong>obrigatório</strong></td></tr>
             <tr><td><code>CepRef</code></td><td>string?</td><td>8</td></tr>
             <tr><td><code>Uf</code></td><td>string?</td><td>2</td></tr>
             <tr><td><code>Ddd</code></td><td>string?</td><td>4</td></tr>
@@ -506,7 +514,11 @@ Content-Type: application/json
 {
   "nome": "Filial Curitiba",
   "sigla": "CWB",
-  "cgc": "00000000000362",
+  "cgc": "11222333000181",
+  "endereco": "Av. das Torres",
+  "nrEndereco": "500",
+  "bairro": "Centro",
+  "cep": "80000000",
   "cidade": "Curitiba",
   "uf": "PR",
   "flColeta": 1,
@@ -520,7 +532,11 @@ Content-Type: application/json
   "cdFilial": "03",
   "nome": "Filial Curitiba",
   "sigla": "CWB",
-  "cgc": "00000000000362",
+  "cgc": "11222333000181",
+  "endereco": "Av. das Torres",
+  "nrEndereco": "500",
+  "bairro": "Centro",
+  "cep": "80000000",
   "cidade": "Curitiba",
   "uf": "PR",
   "flColeta": 1,
@@ -535,6 +551,30 @@ Content-Type: application/json
           endpoint pode retornar um <strong>403 em formato <code>ProblemDetails</code></strong> (não{" "}
           <code>ApiErrorResponse</code>) quando o operador não tem a permissão de processo{" "}
           <strong>1152</strong> liberada — ver seção 2.
+        </p>
+
+        <p>
+          <strong>ℹ Efeitos colaterais (mesma transação, tudo ou nada — paridade com o legado
+          Incluir_Registro_Filial):</strong> ao criar a filial, o backend também:
+        </p>
+        <ol>
+          <li>
+            concede acesso (<code>Usuario_Filial</code>) a todo usuário "power" que ainda não tenha acesso a
+            uma filial com código <strong>menor que 100</strong> (não afeta a própria filial recém-criada
+            quando o código dela é ≥ 100);
+          </li>
+          <li>
+            cria automaticamente o <code>FilialParametro</code> da nova filial, com todas as flags de
+            configuração (~47 campos <code>Fl*</code>, ver seção 10) já definidas como <code>"N"</code>;
+          </li>
+          <li>
+            grava uma linha de auditoria (<code>Log_Transacao</code>, código de processo{" "}
+            <strong>1152</strong>) identificando a filial criada e o operador.
+          </li>
+        </ol>
+        <p>
+          Se qualquer etapa falhar (inclusive a inclusão da própria filial), a transação inteira é desfeita
+          — nenhum dos efeitos colaterais acima persiste.
         </p>
       </section>
 

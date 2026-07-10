@@ -2,7 +2,6 @@ import { Route, Routes } from "react-router-dom";
 import { paths } from "@shared/routes/paths";
 import HomePage from "@app/pages/HomePage";
 
-import MantranApiGerarTokenPage from "@pages/mantranApi/MantranApiGerarTokenPage";
 import MantranApiArquiteturaPage from "@pages/mantranApi/MantranApiArquiteturaPage";
 import MantranApiLoginAuthPage from "@pages/mantranApi/MantranApiLoginAuthPage";
 import MantranApiEmpresaPage from "@pages/mantranApi/MantranApiEmpresaPage";
@@ -42,7 +41,6 @@ function AppRoutes() {
     <Routes>
       <Route path={paths.home} element={<HomePage />} />
 
-      <Route path={paths.mantranApi.gerarToken} element={<MantranApiGerarTokenPage />} />
       <Route path={paths.mantranApi.arquitetura} element={<MantranApiArquiteturaPage />} />
       <Route path={paths.mantranApi.login} element={<MantranApiLoginAuthPage />} />
       <Route path={paths.mantranApi.empresa} element={<MantranApiEmpresaPage />} />

@@ -22,7 +22,6 @@ const navItems: NavSection[] = [
     label: "Mantran.Applications - API",
     icon: <Server size={18} />,
     entries: [
-      leaf(paths.mantranApi.gerarToken, "Gerar Token"),
       {
         kind: "group",
         key: "veiculo",

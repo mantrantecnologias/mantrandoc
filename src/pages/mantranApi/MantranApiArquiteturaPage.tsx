@@ -218,9 +218,9 @@ function MantranApiArquiteturaPage() {
       <section id="arquitetura_autenticacao">
         <h3>4. Autenticação e Autorização</h3>
         <p>
-          Token <strong>JWT assinado (JWS), algoritmo HS256</strong> (HMAC-SHA256, segredo simétrico) — não
-          há ECDSA nem JWE nesta API (essa combinação foi avaliada e descartada em design; ver{" "}
-          <code>.claude/specs/2026-06-11-autenticacao-jwt-design.md</code> no repositório da API).
+          Token assinado <strong>ES256 (ECDSA P-256)</strong> e criptografado em <strong>JWE</strong>{" "}
+          (ECDH-ES+A256KW / A256GCM) — ver a página <strong>Login (Autenticação e Autorização)</strong>,
+          seção 4, para o detalhe da geração e validação do token.
         </p>
         <h4>4.1 Endpoints</h4>
         <table className="data-table">

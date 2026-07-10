@@ -7,9 +7,9 @@ function MantranApiLoginAuthPage() {
       <h4>Documentação Técnica — Autenticação e Autorização (Mantran.Applications - API)</h4>
 
       <p>
-        A autenticação usa <strong>JWT assinado (JWS), algoritmo HS256</strong>. Consulte também a página{" "}
-        <strong>Arquitetura</strong> (seção "Autenticação e Autorização") para a visão geral do mecanismo;
-        esta página aprofunda os endpoints e o passo a passo interno.
+        A autenticação usa <strong>JWT assinado ES256 (ECDSA P-256) e criptografado em JWE</strong>.
+        Consulte também a página <strong>Arquitetura</strong> (seção "Autenticação e Autorização") para
+        a visão geral do mecanismo; esta página aprofunda os endpoints e o passo a passo interno.
       </p>
 
       {/* 1. Visão Geral */}
@@ -18,8 +18,9 @@ function MantranApiLoginAuthPage() {
         <p>
           A autenticação é composta por duas etapas: <strong>login</strong> (validação de credenciais,
           resolução do tenant e emissão do token) e <strong>autorização</strong> (leitura das claims do
-          token para liberar ou negar acesso a cada endpoint). Token: <strong>JWT/JWS assinado com
-          HS256</strong> (HMAC-SHA256, segredo simétrico) — não há JWE, não há chave assimétrica.
+          token para liberar ou negar acesso a cada endpoint). Token: assinado com{" "}
+          <strong>ES256 (ECDSA P-256)</strong> e depois criptografado em <strong>JWE</strong>{" "}
+          (ECDH-ES+A256KW / A256GCM) — chave assimétrica, payload ilegível sem a chave privada.
         </p>
 
         <h4>Endpoints do AuthController (<code>api/auth</code>)</h4>
@@ -43,13 +44,7 @@ function MantranApiLoginAuthPage() {
               <td><code>POST</code></td>
               <td><code>/api/auth/token</code></td>
               <td><code>TokenResponse</code></td>
-              <td>Login para consumo via Bearer (Swagger, integrações, este próprio site de docs) — token no corpo da resposta, sem cookie</td>
-            </tr>
-            <tr>
-              <td><code>POST</code></td>
-              <td><code>/api/auth/Gerar-Token</code></td>
-              <td><code>TokenResponse</code></td>
-              <td>Login para uso externo / integrações — igual ao <code>/token</code>, mas a resposta não inclui os dados do usuário (<code>user</code>)</td>
+              <td>Login para uso externo / integrações — token e validade no corpo da resposta, sem cookie e sem dados do usuário (<code>user</code>)</td>
             </tr>
             <tr>
               <td><code>POST</code></td>
@@ -60,7 +55,7 @@ function MantranApiLoginAuthPage() {
           </tbody>
         </table>
         <p>
-          Todos os quatro endpoints são <code>[AllowAnonymous]</code> e ficam sob uma política de{" "}
+          Todos os três endpoints são <code>[AllowAnonymous]</code> e ficam sob uma política de{" "}
           <strong>rate limiting</strong> mais restrita que o resto da API: 10 requisições por minuto por
           IP (contra 100/min no restante da API) — proteção contra força bruta de senha.
         </p>
@@ -70,7 +65,7 @@ function MantranApiLoginAuthPage() {
       <section id="login_fluxo">
         <h3>2. Fluxo de Login (passo a passo)</h3>
         <p>
-          <code>/api/auth/login</code>, <code>/api/auth/token</code> e <code>/api/auth/Gerar-Token</code> chamam exatamente o mesmo{" "}
+          <code>/api/auth/login</code> e <code>/api/auth/token</code> chamam exatamente o mesmo{" "}
           <code>AuthService.LoginAsync</code> — a diferença entre eles é onde o token acaba e quais dados
           são retornados junto com ele. O fluxo interno:
         </p>
@@ -109,37 +104,19 @@ Set-Cookie: XSRF-TOKEN=a1b2c3...; Path=/; Expires=...   (legível por JS — ver
   "email": "joao.silva@mantran.com.br"
   // demais campos do usuário
 }`}</pre>
+        <p>
+          É esse endpoint que este próprio site de documentação usa para o login do usuário{" "}
+          <code>suporte.mantran</code> (sessão de navegador via cookie).
+        </p>
 
         <h4>2.2 POST /api/auth/token — Resposta</h4>
         <pre className="code-block">{`POST /api/auth/token
 Content-Type: application/json
 
 { "username": "joao.silva", "password": "minhasenha" }`}</pre>
-        <p><strong>200 OK</strong> (sem cookie — o token vai só no corpo):</p>
+        <p><strong>200 OK</strong> (sem cookie, sem dados do usuário — só o token e a validade):</p>
         <pre className="code-block">{`{
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "expiresAt": "2026-07-03T18:00:00Z",
-  "user": {
-    "login": "joao.silva",
-    "companyCode": "001",
-    "branchCode": "01",
-    "email": "joao.silva@mantran.com.br"
-  }
-}`}</pre>
-        <p>
-          Use <code>accessToken</code> no header <code>Authorization: Bearer {"{accessToken}"}</code> das
-          requisições seguintes. É esse endpoint que este próprio site de documentação usa para o login
-          do usuário <code>suporte.mantran</code>.
-        </p>
-
-        <h4>2.3 POST /api/auth/Gerar-Token — Resposta</h4>
-        <pre className="code-block">{`POST /api/auth/Gerar-Token
-Content-Type: application/json
-
-{ "username": "joao.silva", "password": "minhasenha" }`}</pre>
-        <p><strong>200 OK</strong> (sem cookie, sem dados do usuário):</p>
-        <pre className="code-block">{`{
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "accessToken": "eyJhbGciOiJFQ0RILUVTK0EyNTZLVyIsImVuYyI6IkEyNTZHQ00i...", // JWE — 5 partes
   "expiresAt": "2026-07-03T18:00:00Z"
 }`}</pre>
         <p>
@@ -148,7 +125,7 @@ Content-Type: application/json
           que precisam apenas do token JWT, sem necessidade dos dados de perfil do usuário.
         </p>
 
-        <h4>2.4 POST /api/auth/logout</h4>
+        <h4>2.3 POST /api/auth/logout</h4>
         <p>
           Sobrescreve o cookie <code>auth_token</code> e o cookie <code>XSRF-TOKEN</code> com valor vazio
           e expiração no passado (1 hora atrás), forçando o navegador a removê-los. Não invalida um
@@ -210,38 +187,44 @@ Content-Type: application/json
 
       {/* 4. Geração do token */}
       <section id="geracao_token">
-        <h3>4. Geração do Token — JWT HS256</h3>
+        <h3>4. Geração do Token — Assinatura ES256 + Criptografia JWE</h3>
         <p>
-          O token é gerado em <strong>uma única etapa</strong>: um JWT assinado com{" "}
-          <strong>HS256 (HMAC-SHA256)</strong>, um algoritmo simétrico — a mesma chave (um segredo
-          configurado no servidor, com no mínimo 256 bits) assina e depois valida o token. A aplicação
-          se recusa a subir se esse segredo não tiver o tamanho mínimo.
+          O token é gerado em <strong>duas etapas</strong>: primeiro um JWT é <strong>assinado com
+          ES256</strong> (ECDSA sobre a curva P-256) — chave assimétrica: a chave <strong>privada</strong>{" "}
+          assina, a chave <strong>pública</strong> valida. Em seguida, esse JWS assinado é{" "}
+          <strong>criptografado em JWE</strong> usando <strong>ECDH-ES+A256KW</strong> (acordo de chave
+          efêmero, com Perfect Forward Secrecy — cada emissão usa um par de chaves descartável) para
+          embrulhar uma chave de conteúdo <strong>AES-256-GCM</strong>, que cifra o JWS. O resultado final
+          tem 5 partes (<code>header.encryptedKey.iv.ciphertext.tag</code>) — ninguém lê um claim sequer
+          sem a chave privada, mesmo interceptando o token.
         </p>
-        <pre className="code-block">{`// Simplificado — geração do token (JsonWebTokenHandler, HS256)
-var claims = new Dictionary<string, object>
+        <pre className="code-block">{`// Simplificado — geração do token (jose-jwt: assina ES256, depois criptografa em JWE)
+var payload = new Dictionary<string, object>
 {
+    ["iss"]                 = issuer,
+    ["aud"]                 = audience,
     ["sub"]                 = usuario.Login,
     ["jti"]                 = Guid.NewGuid().ToString(),
+    ["iat"]                 = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+    ["exp"]                 = DateTimeOffset.UtcNow.AddHours(8).ToUnixTimeSeconds(),
     ["id_base_referencia"]  = usuario.IdBaseReferencia,
     ["nome_base_dados"]     = usuario.NomeBaseDados,
     ["role"]                = usuario.GrupoAcesso,
     ["cd_empresa"]          = usuario.CdEmpresa,
 };
 
-var token = jsonWebTokenHandler.CreateToken(new SecurityTokenDescriptor
-{
-    Claims             = claims,
-    Expires            = DateTime.UtcNow.AddHours(8),
-    Issuer             = issuer,
-    Audience           = audience,
-    SigningCredentials = new SigningCredentials(
-        new SymmetricSecurityKey(segredoBytes),   // mesmo segredo assina e valida
-        SecurityAlgorithms.HmacSha256
-    ),
-});`}</pre>
+// 1. Assina (JWS) com a chave privada ECDSA P-256
+var signedToken = JWT.Encode(payload, chavePrivada, JwsAlgorithm.ES256);
+
+// 2. Criptografa o JWS em JWE com a chave pública ECDSA P-256
+var encryptedToken = JWT.Encode(
+    signedToken, chavePublica,
+    JweAlgorithm.ECDH_ES_A256KW, JweEncryption.A256GCM
+);`}</pre>
         <p>
-          Não há par de chaves pública/privada nem etapa de criptografia separada — o JWT é assinado (JWS)
-          e pronto. O middleware padrão do ASP.NET (<code>AddJwtBearer</code>) valida HS256 nativamente.
+          Na validação, o handler do JWT Bearer descriptografa o JWE de volta ao JWS interno (com a chave
+          privada) antes de validar a assinatura ES256 (com a chave pública) — o restante do pipeline
+          (issuer/audience/expiração/roles) segue igual ao de qualquer JWT.
         </p>
       </section>
 
@@ -295,7 +278,7 @@ var token = jsonWebTokenHandler.CreateToken(new SecurityTokenDescriptor
           <tbody>
             <tr><td><code>sub</code></td><td>Usuário autenticado (o login, não um ID numérico)</td></tr>
             <tr><td><code>jti</code></td><td>GUID único por emissão</td></tr>
-            <tr><td><code>iat</code> / <code>nbf</code> / <code>exp</code></td><td>Emissão, início e expiração de validade (1h)</td></tr>
+            <tr><td><code>iat</code> / <code>exp</code></td><td>Emissão e expiração de validade (1h)</td></tr>
             <tr><td><code>iss</code> / <code>aud</code></td><td>Emissor e audiência configurados</td></tr>
             <tr><td><code>id_base_referencia</code></td><td>ID do usuário na base central</td></tr>
             <tr><td><code>nome_base_dados</code></td><td>Nome do banco do tenant — usado para resolver a connection string</td></tr>
@@ -344,7 +327,7 @@ var token = jsonWebTokenHandler.CreateToken(new SecurityTokenDescriptor
         </table>
         <p>
           <strong>ℹ Sobre logout e Bearer:</strong> <code>/api/auth/logout</code> só limpa os cookies. Um
-          token Bearer obtido via <code>/api/auth/token</code> ou <code>/api/auth/Gerar-Token</code> continua
+          token Bearer obtido via <code>/api/auth/token</code> continua
           válido até expirar — não existe hoje uma lista de revogação de tokens.
         </p>
       </section>

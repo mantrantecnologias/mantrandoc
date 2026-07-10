@@ -66,31 +66,6 @@ export const documentationIndex: SearchIndexEntry[] = [
     content: "incluir-ocorrencia-rotalivre POST ocorrencia incluir requisicao resposta entrega recebedor",
   },
 
-  // Mantran.Applications - API — Gerar Token
-  {
-    path: paths.mantranApi.gerarToken,
-    hash: "mantran_api_gerar_token",
-    page: "Mantran.Applications - API",
-    label: "Gerar Token — Como Obter Token de Acesso",
-    content:
-      "gerar token acesso endpoint autenticacao usuario senha POST bearer authorization como usar API token JWE expirar 8 horas Postman Insomnia curl",
-  },
-  {
-    path: paths.mantranApi.gerarToken,
-    hash: "gerar_token_endpoint",
-    page: "Mantran.Applications - API",
-    label: "Gerar Token — Endpoint e URL de Produção",
-    content: "endpoint URL producao POST Token gerar-token api.mantran.eti.br Content-Type application json",
-  },
-  {
-    path: paths.mantranApi.gerarToken,
-    hash: "gerar_token_uso",
-    page: "Mantran.Applications - API",
-    label: "Gerar Token — Usando o Token nas Requisições",
-    content:
-      "usar token requisicao Authorization Bearer header Postman Insomnia curl autenticar endpoints protegidos",
-  },
-
   // Mantran.Applications - API — Arquitetura (apps/api, Clean Architecture)
   {
     path: paths.mantranApi.arquitetura,
@@ -124,9 +99,9 @@ export const documentationIndex: SearchIndexEntry[] = [
     hash: "arquitetura_autenticacao",
     page: "Mantran.Applications - API",
     private: true,
-    label: "Arquitetura — Autenticação e Autorização (JWT HS256)",
+    label: "Arquitetura — Autenticação e Autorização (JWT ES256 JWE)",
     content:
-      "JWT JWS HS256 login token AuthController AuthService claims sub role Roles TmsWeb IPermissaoService ProblemDetails ApiErrorResponse 401 403",
+      "JWT JWS JWE ES256 ECDSA login token AuthController AuthService claims sub role Roles TmsWeb IPermissaoService ProblemDetails ApiErrorResponse 401 403",
   },
   {
     path: paths.mantranApi.arquitetura,
@@ -183,15 +158,15 @@ export const documentationIndex: SearchIndexEntry[] = [
       "seguranca rate limiting CSRF cabecalhos HSTS SQL injection fail-fast JWT secret senha texto plano riscos conhecidos",
   },
 
-  // Mantran.Applications - API — Login (AuthController, JWT HS256)
+  // Mantran.Applications - API — Login (AuthController, JWT ES256 JWE)
   {
     path: paths.mantranApi.login,
     hash: "mantran_api_login_auth",
     page: "Mantran.Applications - API",
     private: true,
-    label: "Login — Visão Geral (AuthController, JWT HS256)",
+    label: "Login — Visão Geral (AuthController, JWT ES256 JWE)",
     content:
-      "autenticacao autorizacao login token JWT JWS HS256 AuthController api/auth cookie HttpOnly rate limiting",
+      "autenticacao autorizacao login token JWT JWS JWE ES256 ECDSA AuthController api/auth cookie HttpOnly rate limiting",
   },
   {
     path: paths.mantranApi.login,
@@ -215,9 +190,9 @@ export const documentationIndex: SearchIndexEntry[] = [
     hash: "geracao_token",
     page: "Mantran.Applications - API",
     private: true,
-    label: "Login — Geração do Token JWT HS256",
+    label: "Login — Geração do Token ES256 + JWE",
     content:
-      "geracao token JWT HS256 HMAC-SHA256 simetrico segredo SigningCredentials JsonWebTokenHandler sem ECDSA sem JWE",
+      "geracao token JWT ES256 ECDSA P-256 JWE ECDH-ES A256KW A256GCM jose-jwt criptografia curva eliptica",
   },
   {
     path: paths.mantranApi.login,
