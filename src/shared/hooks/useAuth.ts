@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { authLogin, authLogout } from "@repo/api-client";
+import axios from "axios";
 
 /** Único usuário técnico habilitado a liberar a seção "Serviços" do docs. */
 export const SUPPORT_USERNAME = "suporte.mantran";
@@ -13,7 +13,11 @@ export function useAuth() {
     setIsLoading(true);
     setError(null);
     try {
-      await authLogin({ username: SUPPORT_USERNAME, password });
+      await axios.post(
+        "/api/auth/login",
+        { username: SUPPORT_USERNAME, password },
+        { withCredentials: true },
+      );
       setIsLoggedIn(true);
       return true;
     } catch {
@@ -26,7 +30,7 @@ export function useAuth() {
 
   const logout = useCallback(() => {
     // Best-effort: derruba o cookie no servidor sem bloquear o logout local na resposta da rede.
-    authLogout().catch(() => {});
+    axios.post("/api/auth/logout", undefined, { withCredentials: true }).catch(() => {});
     setIsLoggedIn(false);
   }, []);
 
