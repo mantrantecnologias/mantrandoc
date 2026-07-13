@@ -27,8 +27,12 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
+    optimizeDeps: {
+      exclude: ["@repo/api-client"],
+    },
     resolve: {
       alias: {
+        "@repo/api-client": path.resolve(__dirname, "../../packages/api-client/src"),
         "@app": path.resolve(__dirname, "./src/app"),
         "@assets": path.resolve(__dirname, "./src/assets"),
         "@shared": path.resolve(__dirname, "./src/shared"),
