@@ -1,0 +1,41 @@
+export const paths = {
+  home: "/",
+  login: "/login",
+  mantranApi: {
+    gerarToken: "/mantran-api/gerar-token",
+    arquitetura: "/mantran-api/arquitetura",
+    login: "/mantran-api/login",
+    empresa: "/mantran-api/empresa",
+    filial: "/mantran-api/filial",
+    veiculoCarroceria: "/mantran-api/veiculo-carroceria",
+    modeloVeiculo: "/mantran-api/modelo-veiculo",
+    embalagem: "/mantran-api/embalagem",
+    produto: "/mantran-api/produto",
+    rotaLivre: "/mantran-api/rota-livre",
+    dafiti: "/mantran-api/dafiti",
+    corretora: "/mantran-api/corretora",
+  },
+  sqlViews: "/sql-views",
+  leoMadeirasApi: "/leo-madeiras-api",
+  webApiInterfaces: "/web-api-interfaces",
+  signInSignOn: "/sign-in-sign-on",
+  webApiCalculoFrete: "/web-api-calculo-frete",
+  webApiConhecimento: "/web-api-conhecimento",
+  webApi: {
+    localizeCargas: "/web-api/localize-cargas-rodoviario",
+    mobile: "/web-api/mobile",
+  },
+  servicos: {
+    routeasy: "/servicos/routeasy",
+    leoMadeiras: {
+      baixaNf: "/servicos/leo-madeiras/baixa-nf",
+      geracaoAutomatica: "/servicos/leo-madeiras/geracao-automatica",
+    },
+    shopee: {
+      gerarCte: "/servicos/shopee/gerar-cte",
+      multiCte: "/servicos/shopee/multi-cte",
+      envioDocumentos: "/servicos/shopee/envio-documentos",
+    },
+    bandeirantes: "/servicos/bandeirantes",
+  },
+} as const;

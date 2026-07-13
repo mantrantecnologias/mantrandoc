@@ -1,0 +1,19 @@
+
+> Mantran.Docs@0.0.0 test
+> vitest run
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.9 [39m[90mC:/Users/programador03/source/repos/Mantran.Applications/apps/docs[39m
+
+[31mNo test files found, exiting with code 1
+[39m
+[2minclude: [22m[33m**/*.{test,spec}.?(c|m)[jt]s?(x)[39m
+[2mexclude:  [22m[33m**/node_modules/**[2m, [22m**/.git/**[39m
+
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path C:\Users\programador03\source\repos\Mantran.Applications\apps\docs
+npm error workspace Mantran.Docs@0.0.0
+npm error location C:\Users\programador03\source\repos\Mantran.Applications\apps\docs
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c vitest run
