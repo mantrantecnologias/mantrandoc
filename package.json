@@ -13,6 +13,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@repo/api-client": "*",
     "@tanstack/react-query": "^5.90.2",
     "axios": "^1.16.1",
     "lucide-react": "^0.556.0",
